@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VYBEOZA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--bg4:#242424;--bg5:#2e2e2e;
+  --accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;
+  --text:#ffffff;--text2:#cccccc;--muted:#777777;--border:#272727;
+  --font:'DM Sans',sans-serif;--font-brand:'Syne',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{background:#111;color:var(--text);font-family:var(--font);display:flex;justify-content:center;align-items:center}
+input,button,textarea,select{font-family:var(--font)}
+
+/* ── PHONE SHELL ─────────────────────────────────── */
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;border:1.5px solid #2a2a2a;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 30px 100px #00000080,0 0 0 1px #333}
+
+/* ── SPLASH ──────────────────────────────────────── */
+#splash{position:absolute;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;animation:splashOut .5s forwards 2.2s}
+.splash-logo{font-family:var(--font-brand);font-size:46px;font-weight:800;background:linear-gradient(135deg,#ff2d78,#a259ff 50%,#00f0c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.splash-tag{font-size:12px;color:var(--muted);letter-spacing:4px;text-transform:uppercase}
+.splash-loader{width:120px;height:2px;background:var(--bg4);border-radius:2px;margin-top:40px;overflow:hidden}
+.splash-loader::after{content:'';display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:2px;animation:loadBar 1.8s ease forwards .2s}
+@keyframes loadBar{to{width:100%}}
+@keyframes splashOut{to{opacity:0;pointer-events:none;visibility:hidden}}
+
+/* ── AUTH SCREENS ────────────────────────────────── */
+.auth-wrap{position:absolute;inset:0;z-index:90;background:var(--bg);display:none;flex-direction:column;overflow-y:auto}
+.auth-wrap.active{display:flex}
+.auth-top{padding:60px 28px 20px;text-align:center}
+.auth-logo{font-family:var(--font-brand);font-size:36px;font-weight:800;background:linear-gradient(135deg,#ff2d78,#a259ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.auth-sub{font-size:13px;color:var(--muted)}
+.auth-body{padding:20px 28px 40px;display:flex;flex-direction:column;gap:14px;flex:1}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:4px 0}
+.auth-divider span{font-size:12px;color:var(--muted);white-space:nowrap}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-size:14px;outline:none;transition:border .2s}
+.auth-input:focus{border-color:var(--accent3)}
+.auth-input::placeholder{color:var(--muted)}
+.auth-btn-main{width:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.3px;transition:opacity .2s}
+.auth-btn-main:hover{opacity:.88}
+.auth-btn-outline{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:13px;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:border .2s}
+.auth-btn-outline:hover{border-color:var(--accent3)}
+.auth-switch{text-align:center;font-size:13px;color:var(--muted);margin-top:6px}
+.auth-switch a{color:var(--accent3);cursor:pointer;text-decoration:none}
+.auth-terms{text-align:center;font-size:11px;color:var(--muted);line-height:1.6;padding:0 10px}
+.auth-terms a{color:var(--accent3)}
+.pwd-wrap{position:relative}
+.pwd-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px}
+.auth-error{font-size:12px;color:var(--accent);text-align:center;display:none;padding:4px 0}
+.auth-back{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:16px 20px;align-self:flex-start}
+.profile-pic-upload{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0}
+.pic-circle{width:90px;height:90px;border-radius:50%;background:var(--bg3);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--muted);gap:6px;transition:border .2s}
+.pic-circle:hover{border-color:var(--accent3)}
+.step-dots{display:flex;gap:6px;justify-content:center;margin:12px 0 0}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .2s}
+.step-dot.active{background:var(--accent3);width:18px;border-radius:3px}
+
+/* ── APP SHELL ───────────────────────────────────── */
+#app-shell{position:absolute;inset:0;display:none;flex-direction:column}
+#app-shell.active{display:flex}
+
+/* ── TOPBAR ──────────────────────────────────────── */
+.topbar{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.brand{font-family:var(--font-brand);font-size:22px;font-weight:800;background:linear-gradient(90deg,#ff2d78,#a259ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{display:flex;gap:4px;align-items:center}
+.tb-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:6px 8px;border-radius:10px;transition:color .2s;position:relative}
+.tb-btn:hover{color:var(--text)}
+.tb-dot::after{content:'';position:absolute;top:5px;right:6px;width:7px;height:7px;background:var(--accent);border-radius:50%;border:2px solid var(--bg)}
+
+/* ── SCREENS ─────────────────────────────────────── */
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;display:none;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.screen::-webkit-scrollbar{width:2px}
+.screen::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.screen.active{display:block}
+
+/* ── PREFO (Facebook Stories – rounded rectangles) ─ */
+.prefo-section{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
+.prefo-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.prefo-row::-webkit-scrollbar{display:none}
+.prefo-item{flex-shrink:0;width:80px;height:130px;border-radius:14px;border:2.5px solid var(--accent3);overflow:hidden;cursor:pointer;position:relative;background:var(--bg3);transition:transform .18s}
+.prefo-item:hover{transform:scale(1.03)}
+.prefo-item.add-prefo{border:2px dashed var(--border)}
+.prefo-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px}
+.prefo-name{position:absolute;bottom:0;left:0;right:0;padding:22px 6px 7px;background:linear-gradient(transparent,rgba(0,0,0,.76));font-size:10px;font-weight:600;text-align:center;line-height:1.2}
+.prefo-avatar{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--accent3);border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px}
+.prefo-add-icon{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700}
+
+/* ── FLASH FEED (YouTube Home style) ─────────────── */
+.yt-categories{display:flex;gap:8px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.yt-categories::-webkit-scrollbar{display:none}
+.yt-cat{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.yt-cat.active,.yt-cat:hover{background:var(--text);color:var(--bg);border-color:var(--text)}
+.viso-card{padding:14px;cursor:pointer;border-bottom:1px solid var(--border)}
+.viso-thumb{width:100%;height:195px;background:var(--bg3);border-radius:14px;overflow:hidden;position:relative;margin-bottom:11px}
+.viso-thumb-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--bg5);font-family:var(--font-brand)}
+.viso-thumb-grad{position:absolute;inset:0;opacity:.5}
+.viso-duration{position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,.82);color:#fff;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px}
+.viso-meta{display:flex;gap:10px;align-items:flex-start}
+.viso-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
+.viso-info{flex:1}
+.viso-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--text)}
+.viso-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.viso-menu{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px}
+.viso-actions{display:flex;gap:6px;margin-top:8px;margin-left:44px}
+.viso-act{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:11px;transition:all .18s}
+.viso-act:hover,.viso-act.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.viso-act.save:hover,.viso-act.save.active{background:var(--accent2);border-color:var(--accent2);color:#000}
+.ad-banner{margin:4px 14px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.ad-label{font-size:9px;background:var(--bg5);color:var(--muted);padding:2px 6px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.ad-text{font-size:12px;color:var(--text2);flex:1}
+.ad-btn{background:var(--accent3);border:none;color:#fff;padding:5px 12px;border-radius:8px;font-size:11px;cursor:pointer;white-space:nowrap}
+
+/* ── FLOW (Insta Reels feed style) ───────────────── */
+.flow-card{border-bottom:1px solid var(--border)}
+.flow-thumb{width:100%;height:260px;background:var(--bg3);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.flow-grad{position:absolute;inset:0;opacity:.5}
+.flow-num-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:var(--bg5);font-family:var(--font-brand)}
+.flow-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px 14px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.flow-user-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.flow-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px}
+.flow-username{font-size:13px;font-weight:600}
+.flow-follow-btn{background:none;border:1.5px solid #fff;color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;cursor:pointer;margin-left:auto;font-family:var(--font)}
+.flow-caption{font-size:12px;color:var(--text2);line-height:1.4}
+.flow-side{position:absolute;right:12px;bottom:70px;display:flex;flex-direction:column;gap:16px;align-items:center}
+.flow-side-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.flow-side-icon{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .2s}
+.flow-side-icon:hover{background:rgba(255,255,255,.25)}
+.flow-side-count{font-size:10px;color:#ddd}
+.live-badge{position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.8px}
+.flow-ad{border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--bg3)}
+
+/* ── SEARCH ──────────────────────────────────────── */
+.search-bar-wrap{padding:12px 14px;border-bottom:1px solid var(--border)}
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 14px}
+.search-bar input{background:none;border:none;color:var(--text);font-size:14px;flex:1;outline:none}
+.search-bar input::placeholder{color:var(--muted)}
+.search-bar span{color:var(--muted);font-size:16px}
+.search-tags{display:flex;gap:8px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.search-tags::-webkit-scrollbar{display:none}
+.s-tag{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .18s}
+.s-tag:hover,.s-tag.active{background:var(--accent3);border-color:var(--accent3);color:#fff}
+.search-result{margin:6px 12px;background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:12px}
+.s-avatar{width:40px;height:40px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.s-name{font-size:13px;font-weight:600}
+.s-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.s-follow{margin-left:auto;background:var(--accent);border:none;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:var(--font)}
+
+/* ── HYPO (Messages) ─────────────────────────────── */
+.screen-title{padding:14px 16px 12px;font-family:var(--font-brand);font-size:20px;font-weight:700;border-bottom:1px solid var(--border)}
+.chat-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .18s}
+.chat-item:hover{background:var(--bg2)}
+.chat-av{width:46px;height:46px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:19px;position:relative;flex-shrink:0}
+.online{position:absolute;bottom:2px;right:2px;width:11px;height:11px;background:var(--accent2);border-radius:50%;border:2px solid var(--bg)}
+.chat-body{flex:1;min-width:0}
+.chat-name{font-size:14px;font-weight:600}
+.chat-prev{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.chat-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.chat-time{font-size:11px;color:var(--muted)}
+.chat-badge{background:var(--accent);color:#fff;border-radius:10px;font-size:10px;padding:2px 7px;font-weight:700}
+
+/* ── CHAT DETAIL ─────────────────────────────────── */
+.chat-detail{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:20}
+.chat-detail.open{display:flex}
+.chat-detail-header{height:58px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cd-back{background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;padding:4px 8px;border-radius:8px}
+.cd-av{width:36px;height:36px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cd-info{flex:1}
+.cd-name{font-size:14px;font-weight:600}
+.cd-status{font-size:11px;color:var(--accent2)}
+.cd-options{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg-group{display:flex;flex-direction:column;gap:3px}
+.msg-bubble{max-width:72%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word}
+.msg-in{background:var(--bg3);border:1px solid var(--border);border-radius:16px 16px 16px 4px;align-self:flex-start;color:var(--text2)}
+.msg-out{background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:16px 16px 4px 16px;align-self:flex-end;color:#fff}
+.msg-time{font-size:10px;color:var(--muted);margin-top:2px;padding:0 4px}
+.msg-time.r{text-align:right}
+.chat-input-row{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0}
+.chat-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:22px;padding:10px 16px;color:var(--text);font-size:13px;outline:none}
+.chat-input::placeholder{color:var(--muted)}
+.send-btn{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── BASE (Profile) ──────────────────────────────── */
+.base-header{position:relative}
+.base-banner{height:120px;background:linear-gradient(135deg,#ff2d7840,#a259ff30,#00f0c820)}
+.base-av-wrap{position:absolute;bottom:-38px;left:16px;width:78px;height:78px;border-radius:50%;background:var(--bg3);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:32px}
+.base-top-actions{position:absolute;top:10px;right:12px;display:flex;gap:6px}
+.base-top-btn{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;backdrop-filter:blur(4px);font-family:var(--font)}
+.base-info{padding:48px 16px 16px;border-bottom:1px solid var(--border)}
+.base-name{font-family:var(--font-brand);font-size:21px;font-weight:800}
+.base-handle{font-size:13px;color:var(--muted);margin-top:2px}
+.base-bio{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.5}
+.base-privacy{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:5px 12px;border-radius:20px;cursor:pointer;transition:border .2s}
+.base-privacy:hover{border-color:var(--accent3)}
+.base-stats{display:flex;gap:0;margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.bstat{flex:1;text-align:center;border-right:1px solid var(--border)}
+.bstat:last-child{border:none}
+.bstat-num{font-family:var(--font-brand);font-size:19px;font-weight:700}
+.bstat-lbl{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
+.base-actions{display:flex;gap:8px;margin-top:14px}
+.base-btn{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:10px;font-size:12px;cursor:pointer;font-family:var(--font);transition:all .18s;font-weight:500}
+.base-btn:hover{border-color:var(--accent);color:var(--accent)}
+.base-btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff}
+.base-tabs{display:flex;border-bottom:1px solid var(--border)}
+.btab{flex:1;padding:12px;font-size:12px;text-align:center;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-weight:500}
+.btab.active{color:var(--text);border-bottom-color:var(--accent)}
+.base-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px}
+.grid-cell{aspect-ratio:1;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--bg5);cursor:pointer;position:relative;overflow:hidden;transition:opacity .2s;font-family:var(--font-brand)}
+.grid-cell:hover{opacity:.78}
+.grid-overlay{position:absolute;inset:0}
+
+/* ── 3-DOT BOTTOM SHEET ──────────────────────────── */
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.65);z-index:30;display:none}
+.overlay.open{display:block;animation:fadeIn .2s}
+.bottom-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-radius:22px 22px 0 0;border-top:1px solid var(--border);padding:8px 0 24px;animation:slideUp .25s ease}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 14px}
+.sheet-title{padding:0 20px 12px;font-family:var(--font-brand);font-size:17px;font-weight:700}
+.sheet-item{display:flex;align-items:center;gap:14px;padding:13px 20px;cursor:pointer;transition:background .15s}
+.sheet-item:hover{background:var(--bg3)}
+.si-icon{font-size:18px;width:26px;text-align:center}
+.si-text{flex:1;font-size:14px}
+.si-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── POST MODAL ──────────────────────────────────── */
+.post-modal{position:absolute;inset:0;background:rgba(0,0,0,.93);z-index:50;display:none;flex-direction:column;padding:16px;gap:12px;animation:slideUp .28s ease}
+.post-modal.open{display:flex}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--font-brand);font-size:18px;font-weight:700}
+.close-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.post-types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.post-type{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s}
+.post-type:hover{border-color:var(--accent);background:#ff2d7810}
+.pt-icon{font-size:26px;display:block;margin-bottom:7px}
+.pt-name{font-size:13px;font-weight:600}
+.pt-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.compose-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;flex:1;display:flex;flex-direction:column}
+.compose-box textarea{background:none;border:none;color:var(--text);font-size:14px;font-family:var(--font);width:100%;resize:none;outline:none;flex:1;min-height:80px}
+.compose-acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.c-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:6px 13px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .18s;font-family:var(--font)}
+.c-btn:hover{border-color:var(--accent3);color:var(--text)}
+.pub-btn{margin-left:auto;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:8px 22px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* ── NOTIFICATIONS ───────────────────────────────── */
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.notif-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ni-like{background:#ff2d7820;color:var(--accent)}
+.ni-comment{background:#a259ff20;color:var(--accent3)}
+.ni-follow{background:#00f0c820;color:var(--accent2)}
+.notif-body{flex:1}
+.notif-text{font-size:13px;color:var(--text2);line-height:1.4}
+.notif-text b{color:var(--text);font-weight:600}
+.notif-time{font-size:11px;color:var(--muted);margin-top:3px}
+.notif-thumb{width:40px;height:40px;border-radius:8px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);font-family:var(--font-brand)}
+
+/* ── PRIVACY SHEET ───────────────────────────────── */
+.privacy-opt{display:flex;align-items:center;gap:14px;padding:13px 20px;cursor:pointer}
+.privacy-opt:hover{background:var(--bg3)}
+.po-icon{font-size:22px;width:32px;text-align:center}
+.po-info{flex:1}
+.po-name{font-size:14px;font-weight:600}
+.po-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.po-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px}
+.po-check.on{background:var(--accent2);border-color:var(--accent2);color:#000;font-weight:700}
+
+/* ── BOTTOM NAV ──────────────────────────────────── */
+.nav{height:60px;display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.nav-btn{background:none;border:none;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:10px;transition:color .18s}
+.nav-btn.active{color:var(--accent)}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:8px;letter-spacing:.4px;text-transform:uppercase;font-weight:500}
+.post-fab{background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;color:#fff;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px #ff2d7850;transition:transform .18s}
+.post-fab:active{transform:scale(.9)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:8px 18px;border-radius:20px;font-size:12px;opacity:0;transition:.28s;white-space:nowrap;pointer-events:none;z-index:200}
+.toast.show{opacity:1}
+
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ═══ SPLASH ═════════════════════════════════════ -->
+<div id="splash">
+  <div class="splash-logo">VYBEOZA</div>
+  <div class="splash-tag">Feel the vibe</div>
+  <div class="splash-loader"></div>
+</div>
+
+<!-- ═══ AUTH: LOGIN ════════════════════════════════ -->
+<div class="auth-wrap active" id="auth-login">
+  <div class="auth-top">
+    <div class="auth-logo">VYBEOZA</div>
+    <div class="auth-sub">Sign in to continue vibing</div>
+  </div>
+  <div class="auth-body">
+    <button class="auth-btn-outline" onclick="showToast('Google sign-in coming soon!')">🌐 &nbsp;Continue with Google</button>
+    <button class="auth-btn-outline" onclick="showToast('Apple sign-in coming soon!')">🍎 &nbsp;Continue with Apple</button>
+    <div class="auth-divider"><span>or</span></div>
+    <input class="auth-input" type="text" id="login-user" placeholder="Username, email or phone">
+    <div class="pwd-wrap">
+      <input class="auth-input" type="password" id="login-pass" placeholder="Password">
+      <button class="pwd-toggle" onclick="togglePwd('login-pass',this)">👁</button>
+    </div>
+    <div class="auth-error" id="login-error">Please enter username and password.</div>
+    <button class="auth-btn-main" onclick="doLogin()">Log In</button>
+    <div style="text-align:center;font-size:13px;color:var(--accent3);cursor:pointer">Forgot password?</div>
+    <div class="auth-divider"></div>
+    <div class="auth-switch">Don't have an account? <a onclick="showAuth('auth-signup1')">Sign up</a></div>
+  </div>
+</div>
+
+<!-- ═══ AUTH: SIGNUP 1 ═════════════════════════════ -->
+<div class="auth-wrap" id="auth-signup1">
+  <button class="auth-back" onclick="showAuth('auth-login')">← Back</button>
+  <div class="auth-top">
+    <div class="auth-logo">VYBEOZA</div>
+    <div class="auth-sub">Create your account</div>
+    <div class="step-dots"><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+  </div>
+  <div class="auth-body">
+    <input class="auth-input" type="text" id="su-name" placeholder="Full name">
+    <input class="auth-input" type="text" id="su-phone" placeholder="Phone number or email">
+    <input class="auth-input" type="text" id="su-dob" placeholder="Date of birth (DD/MM/YYYY)">
+    <div class="auth-error" id="su1-error">Please fill in all fields.</div>
+    <button class="auth-btn-main" onclick="signupStep1()">Next</button>
+    <div class="auth-terms">By signing up you agree to our <a>Terms</a>, <a>Privacy Policy</a> and <a>Community Guidelines</a>.</div>
+  </div>
+</div>
+
+<!-- ═══ AUTH: SIGNUP 2 ═════════════════════════════ -->
+<div class="auth-wrap" id="auth-signup2">
+  <button class="auth-back" onclick="showAuth('auth-signup1')">← Back</button>
+  <div class="auth-top">
+    <div class="auth-logo">VYBEOZA</div>
+    <div class="auth-sub">Choose your identity</div>
+    <div class="step-dots"><div class="step-dot"></div><div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+  </div>
+  <div class="auth-body">
+    <input class="auth-input" type="text" id="su-username" placeholder="Username (e.g. krishna_vibe)">
+    <div class="pwd-wrap">
+      <input class="auth-input" type="password" id="su-pass" placeholder="Create password">
+      <button class="pwd-toggle" onclick="togglePwd('su-pass',this)">👁</button>
+    </div>
+    <div class="pwd-wrap">
+      <input class="auth-input" type="password" id="su-pass2" placeholder="Confirm password">
+      <button class="pwd-toggle" onclick="togglePwd('su-pass2',this)">👁</button>
+    </div>
+    <div class="auth-error" id="su2-error">Passwords do not match.</div>
+    <button class="auth-btn-main" onclick="signupStep2()">Next</button>
+  </div>
+</div>
+
+<!-- ═══ AUTH: SIGNUP 3 ═════════════════════════════ -->
+<div class="auth-wrap" id="auth-signup3">
+  <button class="auth-back" onclick="showAuth('auth-signup2')">← Back</button>
+  <div class="auth-top">
+    <div class="auth-logo">VYBEOZA</div>
+    <div class="auth-sub">Add a profile photo</div>
+    <div class="step-dots"><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot active"></div><div class="step-dot"></div></div>
+  </div>
+  <div class="auth-body">
+    <div class="profile-pic-upload">
+      <div class="pic-circle" onclick="showToast('Photo upload coming soon!')">
+        <span style="font-size:28px">📷</span>
+        <span>Add photo</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);text-align:center">Add a photo so people know it's you.</div>
+    </div>
+    <button class="auth-btn-main" onclick="showAuth('auth-signup4')">Next</button>
+    <div style="text-align:center;font-size:13px;color:var(--muted);cursor:pointer" onclick="showAuth('auth-signup4')">Skip for now</div>
+  </div>
+</div>
+
+<!-- ═══ AUTH: SIGNUP 4 ═════════════════════════════ -->
+<div class="auth-wrap" id="auth-signup4">
+  <button class="auth-back" onclick="showAuth('auth-signup3')">← Back</button>
+  <div class="auth-top">
+    <div class="auth-logo">VYBEOZA</div>
+    <div class="auth-sub">Tell people about yourself</div>
+    <div class="step-dots"><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot active"></div></div>
+  </div>
+  <div class="auth-body">
+    <textarea class="auth-input" id="su-bio" placeholder="Write a short bio..." rows="3" style="resize:none;height:90px;line-height:1.5"></textarea>
+    <input class="auth-input" type="text" placeholder="Website (optional)">
+    <button class="auth-btn-main" onclick="finishSignup()">Create Account 🎉</button>
+    <div style="text-align:center;font-size:13px;color:var(--muted);cursor:pointer" onclick="finishSignup()">Skip</div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══════════════════════════════════ -->
+<div id="app-shell">
+  <div class="topbar">
+    <div class="brand">VYBEOZA</div>
+    <div class="topbar-right">
+      <button class="tb-btn" onclick="showScreen('search')">🔎</button>
+      <button class="tb-btn tb-dot" onclick="showScreen('notify')">🔔</button>
+    </div>
+  </div>
+
+  <div class="screens">
+
+    <!-- FLASH -->
+    <div id="flash" class="screen active">
+      <div class="prefo-section"><div class="prefo-row" id="prefo-row"></div></div>
+      <div class="yt-categories" id="yt-cats"></div>
+      <div id="feed-container"></div>
+    </div>
+
+    <!-- FLOW -->
+    <div id="flow" class="screen"><div id="flow-container"></div></div>
+
+    <!-- SEARCH -->
+    <div id="search" class="screen">
+      <div class="search-bar-wrap">
+        <div class="search-bar"><span>🔎</span><input placeholder="Search VYBEOZA..." oninput="doSearch(this.value)"></div>
+      </div>
+      <div class="search-tags" id="search-tags"></div>
+      <div id="search-results"></div>
+    </div>
+
+    <!-- HYPO -->
+    <div id="msg" class="screen">
+      <div class="screen-title">Hypo</div>
+      <div id="chats-container"></div>
+      <div class="chat-detail" id="chat-detail">
+        <div class="chat-detail-header">
+          <button class="cd-back" onclick="closeChat()">←</button>
+          <div class="cd-av" id="cd-av"></div>
+          <div class="cd-info"><div class="cd-name" id="cd-name"></div><div class="cd-status" id="cd-status"></div></div>
+          <button class="cd-options" onclick="showToast('Options')">⋯</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-in" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="send-btn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BASE -->
+    <div id="profile" class="screen">
+      <div class="base-header">
+        <div class="base-banner"></div>
+        <div class="base-av-wrap">🎭</div>
+        <div class="base-top-actions">
+          <button class="base-top-btn" onclick="openSheet('base-menu')">⋯</button>
+        </div>
+      </div>
+      <div class="base-info">
+        <div class="base-name" id="base-name">Your Base</div>
+        <div class="base-handle" id="base-handle">@your_handle</div>
+        <div class="base-bio" id="base-bio">Spreading good vibes on VYBEOZA ✨</div>
+        <div class="base-privacy" onclick="openSheet('privacy-menu')">
+          <span id="priv-icon">🔓</span><span id="priv-label">Public Account</span><span style="font-size:10px;margin-left:2px">▼</span>
+        </div>
+        <div class="base-stats">
+          <div class="bstat"><div class="bstat-num">142</div><div class="bstat-lbl">VISOs</div></div>
+          <div class="bstat"><div class="bstat-num" id="vibers-count">8.4K</div><div class="bstat-lbl">Vibers</div></div>
+          <div class="bstat"><div class="bstat-num">312</div><div class="bstat-lbl">Vibing</div></div>
+          <div class="bstat"><div class="bstat-num">94K</div><div class="bstat-lbl">Likes</div></div>
+        </div>
+        <div class="base-actions">
+          <button class="base-btn primary" onclick="showToast('Editing Base...')">Edit Base</button>
+          <button class="base-btn" onclick="showToast('Share your Base!')">Share</button>
+        </div>
+      </div>
+      <div class="base-tabs">
+        <div class="btab active" onclick="btab(this,'visogrid')">VISOs</div>
+        <div class="btab" onclick="btab(this,'flowgrid')">Flow</div>
+        <div class="btab" onclick="btab(this,'savedgrid')">Saved</div>
+      </div>
+      <div id="visogrid"><div class="base-grid" id="grid-viso"></div></div>
+      <div id="flowgrid" style="display:none"><div class="base-grid" id="grid-flow"></div></div>
+      <div id="savedgrid" style="display:none"><div class="base-grid" id="grid-saved"></div></div>
+    </div>
+
+    <!-- NOTIFY -->
+    <div id="notify" class="screen">
+      <div class="screen-title">Pop</div>
+      <div id="notifs-container"></div>
+    </div>
+
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" id="nb-flash" onclick="showScreen('flash')"><span class="nav-icon">🏡</span><span class="nav-label">Flash</span></button>
+    <button class="nav-btn" id="nb-flow" onclick="showScreen('flow')"><span class="nav-icon">📽️</span><span class="nav-label">Flow</span></button>
+    <button class="post-fab" onclick="openPost()">＋</button>
+    <button class="nav-btn" id="nb-msg" onclick="showScreen('msg')"><span class="nav-icon">💬</span><span class="nav-label">Hypo</span></button>
+    <button class="nav-btn" id="nb-profile" onclick="showScreen('profile')"><span class="nav-icon">👤</span><span class="nav-label">Base</span></button>
+  </div>
+</div>
+
+<!-- ═══ POST MODAL ══════════════════════════════════ -->
+<div class="post-modal" id="post-modal">
+  <div class="modal-hdr">
+    <div class="modal-title">New Post</div>
+    <button class="close-btn" onclick="closePost()">✕</button>
+  </div>
+  <div class="post-types">
+    <div class="post-type" onclick="showToast('VISO selected!')"><span class="pt-icon">🎬</span><div class="pt-name">VISO</div><div class="pt-desc">Photo or video</div></div>
+    <div class="post-type" onclick="showToast('Flow selected!')"><span class="pt-icon">📽️</span><div class="pt-name">Flow</div><div class="pt-desc">Short reel</div></div>
+    <div class="post-type" onclick="showToast('Prefo selected!')"><span class="pt-icon">✨</span><div class="pt-name">Prefo</div><div class="pt-desc">24h story</div></div>
+    <div class="post-type" onclick="showToast('Going Live!')"><span class="pt-icon">🔴</span><div class="pt-name">Go Live</div><div class="pt-desc">Live stream</div></div>
+  </div>
+  <div class="compose-box">
+    <textarea placeholder="What's the vibe today?"></textarea>
+    <div class="compose-acts">
+      <button class="c-btn">📸 Media</button>
+      <button class="c-btn">📍 Location</button>
+      <button class="c-btn"># Tag</button>
+      <button class="pub-btn" onclick="showToast('Posted! 🔥');closePost()">Post →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OVERLAY + SHEETS ════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="closeSheet()">
+  <!-- BASE MENU SHEET -->
+  <div class="bottom-sheet" id="base-menu" onclick="event.stopPropagation()" style="display:none">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Base Options</div>
+    <div class="sheet-item" onclick="showToast('Settings');closeSheet()"><span class="si-icon">⚙️</span><div><div class="si-text">Settings & Privacy</div><div class="si-sub">Account, security, notifications</div></div></div>
+    <div class="sheet-item" onclick="showToast('Archive');closeSheet()"><span class="si-icon">🗂️</span><div><div class="si-text">Archive</div><div class="si-sub">Your archived VISOs & stories</div></div></div>
+    <div class="sheet-item" onclick="showHistory()"><span class="si-icon">🕒</span><div><div class="si-text">History</div><div class="si-sub">Previously watched content</div></div></div>
+    <div class="sheet-item" onclick="showToast('Activity');closeSheet()"><span class="si-icon">📊</span><div><div class="si-text">Your Activity</div><div class="si-sub">Likes, comments, vibes</div></div></div>
+    <div class="sheet-item" onclick="showToast('QR Code');closeSheet()"><span class="si-icon">🔲</span><div><div class="si-text">VYBEOZA QR Code</div><div class="si-sub">Share your Base</div></div></div>
+    <div class="sheet-item" onclick="doLogout()"><span class="si-icon">🚪</span><div class="si-text" style="color:var(--accent)">Log Out</div></div>
+  </div>
+  <!-- PRIVACY SHEET -->
+  <div class="bottom-sheet" id="privacy-menu" onclick="event.stopPropagation()" style="display:none">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Account Privacy</div>
+    <div class="privacy-opt" onclick="setPrivacy('public')"><span class="po-icon">🌍</span><div class="po-info"><div class="po-name">Public</div><div class="po-desc">Anyone can see your Base & VISOs</div></div><div class="po-check on" id="pc-public">✓</div></div>
+    <div class="privacy-opt" onclick="setPrivacy('friends')"><span class="po-icon">👥</span><div class="po-info"><div class="po-name">Vibers Only</div><div class="po-desc">Only your Vibers can see your content</div></div><div class="po-check" id="pc-friends"></div></div>
+    <div class="privacy-opt" onclick="setPrivacy('private')"><span class="po-icon">🔒</span><div class="po-info"><div class="po-name">Private</div><div class="po-desc">Only you can see your content</div></div><div class="po-check" id="pc-private"></div></div>
+  </div>
+  <!-- HISTORY SHEET -->
+  <div class="bottom-sheet" id="history-menu" onclick="event.stopPropagation()" style="display:none">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Watch History</div>
+    <div id="history-list" style="max-height:300px;overflow-y:auto"></div>
+    <div style="padding:12px 20px">
+      <button onclick="clearHistory()" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--accent);padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-family:var(--font)">Clear History</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const USERS=[
+  {name:'Krishna',  handle:'@krishna_vibe', emoji:'🎸',bio:'Musician & Creator',vibers:'12.1K'},
+  {name:'Suryansh', handle:'@suryansh',      emoji:'🎮',bio:'Pro Gamer',         vibers:'5.6K'},
+  {name:'Arnav',    handle:'@arnav_creates', emoji:'🏄',bio:'Wave Rider',        vibers:'9.2K'},
+  {name:'Riya',     handle:'@riya.art',      emoji:'🎨',bio:'Digital Artist',    vibers:'18K'},
+  {name:'Dev',      handle:'@dev_rockets',   emoji:'🚀',bio:'Startup Founder',   vibers:'3.1K'},
+  {name:'Meera',    handle:'@meera.flow',    emoji:'🌸',bio:'Aesthetic Creator', vibers:'31K'},
+];
+const CAPS=['This feeling is something else entirely ✨','Best moments with the crew 🔥','New day, new VISO. Let\'s go 🎯','Real talk: life is a vibe 💫','Creating something special for you 🎪','Post when the heart says so 🎭','The streets have their own magic 🌟','No cap, just vibes 💪'];
+const FCAPS=['Can\'t stop watching this 🔥','This went off 🎯','POV: main character energy ✨','Destroyed the vibe 💥','Zero context needed 😤','The transition tho 🌊','Heard it here first 🎵','Low key elite content 👑'];
+const G=[['135deg','#ff2d78','#a259ff'],['135deg','#00f0c8','#a259ff'],['135deg','#ff2d78','#ff6b35'],['45deg','#a259ff','#0066ff'],['90deg','#00f0c8','#0066ff'],['135deg','#ff2d78','#00f0c8']];
+const DUR=['0:42','1:15','2:08','3:24','0:58','1:47','4:02','2:33'];
+const YT_CATS=['All','Gaming','Music','Tech','Travel','Food','Fitness','Comedy','Art','Live'];
+const STAGS=['All','Trending','Music','Gaming','Art','Tech','Fashion','Food'];
+const LIKES=[847,2341,156,4892,723,1205,389,2678];
+const TIMES=['2 min ago','15 min ago','1 hour ago','3 hours ago','5 hours ago','8 hours ago','12 hours ago','1 day ago'];
+const CHAT_SAMPLE=[['Saw your new VISO 🔥','That was insane bro!'],['Did you see the Flow?','Going live tonight!'],['New VISO just dropped','Check it out!'],['That transition 🔥','How did you do that?'],['Vibers are loving it!','Keep going 🙌'],['Collab karte hain?','DM me details']];
+
+let watchHistory=[];
+let currentUser={name:'Your Base',handle:'@your_handle',bio:'Spreading good vibes on VYBEOZA ✨'};
+
+// ── SPLASH → AUTH ─────────────────────────────────────
+setTimeout(()=>document.getElementById('auth-login').classList.add('active'),2400);
+
+// ── AUTH ──────────────────────────────────────────────
+function showAuth(id){
+  document.querySelectorAll('.auth-wrap').forEach(a=>a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function togglePwd(id,btn){
+  const i=document.getElementById(id);
+  i.type=i.type==='password'?'text':'password';
+  btn.textContent=i.type==='text'?'🙈':'👁';
+}
+function doLogin(){
+  const u=document.getElementById('login-user').value;
+  const p=document.getElementById('login-pass').value;
+  const e=document.getElementById('login-error');
+  if(!u||!p){e.style.display='block';return;}
+  e.style.display='none';enterApp();
+}
+function signupStep1(){
+  const n=document.getElementById('su-name').value;
+  const ph=document.getElementById('su-phone').value;
+  const d=document.getElementById('su-dob').value;
+  const e=document.getElementById('su1-error');
+  if(!n||!ph||!d){e.style.display='block';return;}
+  e.style.display='none';showAuth('auth-signup2');
+}
+function signupStep2(){
+  const u=document.getElementById('su-username').value;
+  const p=document.getElementById('su-pass').value;
+  const p2=document.getElementById('su-pass2').value;
+  const e=document.getElementById('su2-error');
+  if(!u||!p){e.style.display='block';e.textContent='Please fill all fields.';return;}
+  if(p!==p2){e.style.display='block';e.textContent='Passwords do not match.';return;}
+  e.style.display='none';
+  if(u)currentUser.handle='@'+u.replace('@','');
+  showAuth('auth-signup3');
+}
+function finishSignup(){
+  const bio=document.getElementById('su-bio').value;
+  const name=document.getElementById('su-name').value;
+  if(name)currentUser.name=name;
+  if(bio)currentUser.bio=bio;
+  enterApp();
+}
+function enterApp(){
+  document.querySelectorAll('.auth-wrap').forEach(a=>a.classList.remove('active'));
+  document.getElementById('app-shell').classList.add('active');
+  document.getElementById('base-name').textContent=currentUser.name;
+  document.getElementById('base-handle').textContent=currentUser.handle;
+  document.getElementById('base-bio').textContent=currentUser.bio;
+  buildAll();
+  showToast('Welcome to VYBEOZA 🎉');
+}
+function doLogout(){
+  document.getElementById('app-shell').classList.remove('active');
+  closeSheet();
+  showAuth('auth-login');
+  showToast('Logged out');
+}
+
+// ── BUILD ALL ─────────────────────────────────────────
+function buildAll(){
+  buildPrefo();buildYTCats();buildFeed();
+  buildFlow();buildSearch();buildChats();
+  buildNotifs();buildGrids();
+}
+
+// ── PREFO ─────────────────────────────────────────────
+function buildPrefo(){
+  const r=document.getElementById('prefo-row');
+  r.innerHTML=`<div class="prefo-item add-prefo" onclick="showToast('Add Prefo')">
+    <div class="prefo-bg" style="color:var(--muted);font-size:20px">📷</div>
+    <div class="prefo-add-icon">＋</div>
+    <div class="prefo-name" style="color:var(--text2)">Add Prefo</div>
+  </div>`;
+  USERS.forEach((u,i)=>{
+    const g=G[i%G.length];
+    r.innerHTML+=`<div class="prefo-item" onclick="showToast('${u.name}\'s Prefo')">
+      <div class="prefo-bg" style="background:linear-gradient(${g[0]},${g[1]}35,${g[2]}35)">${u.emoji}</div>
+      <div class="prefo-avatar">${u.emoji}</div>
+      <div class="prefo-name">${u.name}</div>
+    </div>`;
+  });
+}
+
+// ── YT CATEGORIES ─────────────────────────────────────
+function buildYTCats(){
+  const c=document.getElementById('yt-cats');
+  YT_CATS.forEach((cat,i)=>{
+    c.innerHTML+=`<button class="yt-cat${i===0?' active':''}" onclick="ytCat(this,'${cat}')">${cat}</button>`;
+  });
+}
+function ytCat(el,cat){
+  document.querySelectorAll('.yt-cat').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');showToast(cat);
+}
+
+// ── FEED ──────────────────────────────────────────────
+function buildFeed(){
+  const c=document.getElementById('feed-container');
+  USERS.concat(USERS).slice(0,8).forEach((u,i)=>{
+    const l=LIKES[i];
+    const g=G[i%G.length];
+    if(i===3) c.innerHTML+=`<div class="ad-banner"><span class="ad-label">Ad</span><span class="ad-text">Try VYBEOZA Pro — 4K uploads, live & more</span><button class="ad-btn" onclick="showToast('Opening...')">Learn more</button></div>`;
+    c.innerHTML+=`<div class="viso-card" onclick="addHistory('VISO ${i+1}','${u.name}')">
+      <div class="viso-thumb">
+        <div class="viso-thumb-inner">VISO ${i+1}</div>
+        <div class="viso-thumb-grad" style="background:linear-gradient(${g[0]},${g[1]}45,${g[2]}45)"></div>
+        <div class="viso-duration">${DUR[i%DUR.length]}</div>
+      </div>
+      <div class="viso-meta">
+        <div class="viso-avatar">${u.emoji}</div>
+        <div class="viso-info">
+          <div class="viso-title">${CAPS[i%CAPS.length]}</div>
+          <div class="viso-sub">${u.name} · ${l.toLocaleString()} likes · ${TIMES[i]}</div>
+        </div>
+        <button class="viso-menu" onclick="event.stopPropagation();showToast('Options')">⋯</button>
+      </div>
+      <div class="viso-actions">
+        <button class="viso-act" onclick="event.stopPropagation();toggleLike(this,${l})">♥ ${l.toLocaleString()}</button>
+        <button class="viso-act" onclick="event.stopPropagation();showToast('Comments')">💬 ${Math.floor(l*.08)}</button>
+        <button class="viso-act save" onclick="event.stopPropagation();toggleSave(this)">⊕ Save</button>
+      </div>
+    </div>`;
+  });
+}
+
+// ── FLOW ──────────────────────────────────────────────
+function buildFlow(){
+  const c=document.getElementById('flow-container');
+  USERS.concat(USERS).slice(0,10).forEach((u,i)=>{
+    const lk=(Math.random()*9+0.5).toFixed(1);
+    const g=G[i%G.length];
+    const isLive=i===2;
+    if(i===4) c.innerHTML+=`<div class="flow-ad"><span class="ad-label">Ad</span><span class="ad-text" style="font-size:12px">VYBEOZA Creator Fund — Earn from your Flows!</span><button class="ad-btn" onclick="showToast('Join!')">Join</button></div>`;
+    c.innerHTML+=`<div class="flow-card">
+      <div class="flow-thumb" style="background:linear-gradient(${g[0]},${g[1]}45,${g[2]}45)">
+        <div class="flow-num-bg">FLOW ${i+1}</div>
+        <div class="flow-grad" style="background:linear-gradient(${g[0]},${g[1]}20,${g[2]}20)"></div>
+        ${isLive?'<div class="live-badge">● LIVE</div>':''}
+        <div class="flow-overlay">
+          <div class="flow-user-row">
+            <div class="flow-avatar">${u.emoji}</div>
+            <span class="flow-username">${u.name}</span>
+            <button class="flow-follow-btn" onclick="toggleFollow(this)">+ Vibe</button>
+          </div>
+          <div class="flow-caption">${FCAPS[i%FCAPS.length]}</div>
+        </div>
+        <div class="flow-side">
+          <div class="flow-side-btn" onclick="toggleLike(this,'${lk}K')">
+            <div class="flow-side-icon">♥</div>
+            <div class="flow-side-count">${lk}K</div>
+          </div>
+          <div class="flow-side-btn" onclick="showToast('Comments')">
+            <div class="flow-side-icon">💬</div>
+            <div class="flow-side-count">${Math.floor(Math.random()*500+50)}</div>
+          </div>
+          <div class="flow-side-btn" onclick="toggleSave(this)">
+            <div class="flow-side-icon">⊕</div>
+            <div class="flow-side-count">Save</div>
+          </div>
+          <div class="flow-side-btn" onclick="showToast('Shared!')">
+            <div class="flow-side-icon">↗</div>
+            <div class="flow-side-count">Share</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+// ── SEARCH ────────────────────────────────────────────
+function buildSearch(){
+  const t=document.getElementById('search-tags');
+  STAGS.forEach((tag,i)=>{
+    t.innerHTML+=`<button class="s-tag${i===0?' active':''}" onclick="filterTag(this,'${tag}')">${tag}</button>`;
+  });
+  const r=document.getElementById('search-results');
+  USERS.forEach(u=>{
+    r.innerHTML+=`<div class="search-result">
+      <div class="s-avatar">${u.emoji}</div>
+      <div><div class="s-name">${u.name}</div><div class="s-sub">${u.handle} · ${u.vibers} Vibers</div></div>
+      <button class="s-follow" onclick="toggleFollow(this)">+ Vibe</button>
+    </div>`;
+  });
+}
+function doSearch(v){
+  document.querySelectorAll('.search-result').forEach(r=>{
+    const n=r.querySelector('.s-name').textContent.toLowerCase();
+    r.style.display=(!v||n.includes(v.toLowerCase()))?'flex':'none';
+  });
+}
+function filterTag(el,tag){
+  document.querySelectorAll('.s-tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');showToast(tag);
+}
+
+// ── CHATS ─────────────────────────────────────────────
+function buildChats(){
+  const c=document.getElementById('chats-container');
+  USERS.forEach((u,i)=>{
+    const s=CHAT_SAMPLE[i%CHAT_SAMPLE.length];
+    const times=['now','2m','15m','1h','3h','6h'];
+    c.innerHTML+=`<div class="chat-item" onclick="openChat('${u.name}','${u.emoji}',${i})">
+      <div class="chat-av">${u.emoji}${i<2?'<div class="online"></div>':''}</div>
+      <div class="chat-body"><div class="chat-name">${u.name}</div><div class="chat-prev">${s[0]}</div></div>
+      <div class="chat-right"><div class="chat-time">${times[i]}</div>${i<3?`<div class="chat-badge">${i+1}</div>`:''}</div>
+    </div>`;
+  });
+}
+function openChat(name,emoji,idx){
+  document.getElementById('cd-av').textContent=emoji;
+  document.getElementById('cd-name').textContent=name;
+  document.getElementById('cd-status').textContent=idx<2?'Active now':'Active recently';
+  const msgs=document.getElementById('chat-messages');
+  const s=CHAT_SAMPLE[idx%CHAT_SAMPLE.length];
+  msgs.innerHTML=`
+    <div><div class="msg-bubble msg-in">${s[0]}</div><div class="msg-time">10:42 AM</div></div>
+    <div><div class="msg-bubble msg-out">That's so true 🔥</div><div class="msg-time r">10:43 AM</div></div>
+    <div><div class="msg-bubble msg-in">${s[1]}</div><div class="msg-time">10:44 AM</div></div>
+    <div><div class="msg-bubble msg-out">Seen it! Amazing vibes 🙌</div><div class="msg-time r">10:45 AM</div></div>`;
+  document.getElementById('chat-detail').classList.add('open');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function closeChat(){document.getElementById('chat-detail').classList.remove('open');}
+function sendMsg(){
+  const inp=document.getElementById('chat-in');
+  const v=inp.value.trim();if(!v)return;
+  const msgs=document.getElementById('chat-messages');
+  const now=new Date();
+  const t=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  msgs.innerHTML+=`<div><div class="msg-bubble msg-out">${v}</div><div class="msg-time r">${t}</div></div>`;
+  inp.value='';msgs.scrollTop=msgs.scrollHeight;
+  const rep=['Nice! 🔥','For sure!','That\'s the vibe ✨','Absolutely 💯','Let\'s gooo 🎯','Real talk 💪'];
+  setTimeout(()=>{
+    msgs.innerHTML+=`<div><div class="msg-bubble msg-in">${rep[Math.floor(Math.random()*rep.length)]}</div><div class="msg-time">${t}</div></div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+  },900);
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────
+function buildNotifs(){
+  const c=document.getElementById('notifs-container');
+  [{cls:'ni-like',icon:'♥',user:'Krishna',action:'liked your VISO',time:'2 min ago'},
+   {cls:'ni-comment',icon:'💬',user:'Riya',action:'commented: "Absolutely elite!"',time:'8 min ago'},
+   {cls:'ni-follow',icon:'＋',user:'Dev',action:'started vibing with you',time:'23 min ago'},
+   {cls:'ni-like',icon:'♥',user:'Suryansh',action:'liked your Flow',time:'1 hour ago'},
+   {cls:'ni-comment',icon:'💬',user:'Meera',action:'replied to your comment',time:'2 hours ago'},
+   {cls:'ni-follow',icon:'＋',user:'Arnav',action:'started vibing with you',time:'5 hours ago'},
+  ].forEach((n,i)=>{
+    c.innerHTML+=`<div class="notif-item">
+      <div class="notif-icon ${n.cls}">${n.icon}</div>
+      <div class="notif-body"><div class="notif-text"><b>${n.user}</b> ${n.action}</div><div class="notif-time">${n.time}</div></div>
+      <div class="notif-thumb">V${i+1}</div>
+    </div>`;
+  });
+}
+
+// ── PROFILE GRIDS ─────────────────────────────────────
+function buildGrids(){
+  ['viso','flow','saved'].forEach(type=>{
+    const g=document.getElementById('grid-'+type);
+    for(let i=0;i<12;i++){
+      const gr=G[i%G.length];
+      g.innerHTML+=`<div class="grid-cell" onclick="showToast('${type.toUpperCase()} ${i+1}')">
+        <div class="grid-overlay" style="background:linear-gradient(${gr[0]},${gr[1]}25,${gr[2]}25)"></div>
+        ${type==='saved'?'S':type==='flow'?'F':'V'}${i+1}
+      </div>`;
+    }
+  });
+}
+function btab(el,id){
+  document.querySelectorAll('.btab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['visogrid','flowgrid','savedgrid'].forEach(g=>document.getElementById(g).style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById('nb-'+id);
+  if(nb)nb.classList.add('active');
+}
+
+// ── BOTTOM SHEETS ─────────────────────────────────────
+let activeSheet=null;
+function openSheet(id){
+  document.querySelectorAll('.bottom-sheet').forEach(s=>s.style.display='none');
+  const s=document.getElementById(id);
+  s.style.display='block';
+  document.getElementById('overlay').classList.add('open');
+  activeSheet=id;
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('open');
+  document.querySelectorAll('.bottom-sheet').forEach(s=>s.style.display='none');
+  activeSheet=null;
+}
+function showHistory(){
+  closeSheet();
+  const list=document.getElementById('history-list');
+  if(!watchHistory.length){
+    list.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No history yet. Start watching VISOs!</div>';
+  } else {
+    list.innerHTML=watchHistory.map(h=>`<div class="sheet-item"><span class="si-icon">🎬</span><div><div class="si-text">${h.title}</div><div class="si-sub">${h.creator} · ${h.time}</div></div></div>`).join('');
+  }
+  openSheet('history-menu');
+}
+function clearHistory(){
+  watchHistory=[];
+  document.getElementById('history-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">History cleared.</div>';
+  showToast('History cleared!');
+}
+function addHistory(title,creator){
+  const now=new Date();
+  const t=now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  watchHistory.unshift({title,creator,time:t});
+  if(watchHistory.length>20)watchHistory.pop();
+}
+
+// ── PRIVACY ───────────────────────────────────────────
+let curPrivacy='public';
+function setPrivacy(type){
+  curPrivacy=type;
+  ['public','friends','private'].forEach(t=>{
+    const el=document.getElementById('pc-'+t);
+    el.classList.remove('on');el.textContent='';
+  });
+  document.getElementById('pc-'+type).classList.add('on');
+  document.getElementById('pc-'+type).textContent='✓';
+  const map={public:['🔓','Public Account'],friends:['👥','Vibers Only'],private:['🔒','Private Account']};
+  document.getElementById('priv-icon').textContent=map[type][0];
+  document.getElementById('priv-label').textContent=map[type][1];
+  showToast('Privacy: '+map[type][1]);
+  setTimeout(closeSheet,600);
+}
+
+// ── INTERACTIONS ──────────────────────────────────────
+function toggleLike(btn,orig){
+  btn.classList.toggle('active');
+  const isK=String(orig).includes('K');
+  if(btn.classList.contains('active')){
+    showToast('Liked ♥');
+    if(!isK)btn.innerHTML='♥ '+(parseInt(String(orig).replace(/,/g,''))+1).toLocaleString();
+  }
+}
+function toggleSave(btn){
+  btn.classList.toggle('active');
+  showToast(btn.classList.contains('active')?'Saved! ⊕':'Removed from saved');
+}
+function toggleFollow(btn){
+  const vibing=btn.textContent.includes('Vibe')||btn.textContent.includes('+');
+  if(vibing){btn.textContent='Vibing ✓';btn.style.cssText='background:rgba(255,255,255,.1);color:#ccc;border-color:rgba(255,255,255,.2)';showToast('Vibing! ✓');}
+  else{btn.textContent='+ Vibe';btn.style.cssText='';showToast('Unvibed');}
+}
+
+// ── POST MODAL ────────────────────────────────────────
+function openPost(){document.getElementById('post-modal').classList.add('open');}
+function closePost(){document.getElementById('post-modal').classList.remove('open');}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(t){
+  const x=document.getElementById('toast');
+  x.textContent=t;x.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(()=>x.classList.remove('show'),1500);
+}
+</script>
+</body>
+</html>
