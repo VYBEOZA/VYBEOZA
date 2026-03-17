@@ -21,18 +21,18 @@ button{cursor:pointer}
 a{text-decoration:none;color:inherit}
 
 /* ── SPLASH ── */
-#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;animation:splashOut .5s forwards 2.5s}
+#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;animation:splashOut .5s forwards 2.5s}
 .splash-logo-img{width:120px;height:120px;object-fit:contain;animation:splashPulse 1s ease-in-out infinite alternate}
 .splash-name{font-family:var(--font-brand);font-size:42px;font-weight:800;background:linear-gradient(135deg,#ff2d78,#a259ff,#00f0c8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .splash-tag{font-size:11px;color:var(--muted);letter-spacing:4px;text-transform:uppercase}
 .splash-bar{width:140px;height:2px;background:var(--bg4);border-radius:2px;margin-top:36px;overflow:hidden}
 .splash-bar::after{content:"";display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent3));animation:loadBar 2.2s ease forwards .2s}
 @keyframes loadBar{to{width:100%}}
-@keyframes splashOut{to{opacity:0;pointer-events:none;visibility:hidden}}
+@keyframes splashOut{to{opacity:0;pointer-events:none;visibility:hidden;display:none}}
 @keyframes splashPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
 
 /* ── AUTH ── */
-.auth-screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;overflow-y:auto}
+.auth-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;overflow-y:auto}
 .auth-screen.active{display:flex}
 .auth-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px}
 .auth-logo-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:40px}
@@ -1279,6 +1279,11 @@ document.addEventListener("click",e=>{
 
 // INIT
 buildFeed();buildFlow();buildChats();buildNotifs();buildSearch();buildProfileGrids();buildFilters();
+// Fix splash blocking - remove pointer events after animation
+setTimeout(function(){
+  var s=document.getElementById('splash');
+  if(s){s.style.pointerEvents='none';s.style.zIndex='-1';}
+},2800);
 </script>
 </body>
 </html>
