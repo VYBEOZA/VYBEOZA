@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYBEOZA — Explore</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--text:#fff;--text2:#ccc;--muted:#777;--border:#272727;--font:"DM Sans",sans-serif;--brand:"Syne",sans-serif;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100%}
+button,input{font-family:var(--font)}
+.topbar{position:sticky;top:0;height:56px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);z-index:50}
+.back-btn{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 10px 4px 0}
+.search-inp{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 16px;color:var(--text);font-size:14px;outline:none;transition:border .2s}
+.search-inp:focus{border-color:var(--accent3)}
+.search-inp::placeholder{color:var(--muted)}
+.body{max-width:900px;margin:0 auto;padding:14px 16px}
+.tag-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding-bottom:4px}
+.tag-row::-webkit-scrollbar{display:none}
+.tag{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.tag:hover,.tag.on{background:var(--accent3);border-color:var(--accent3);color:#fff}
+.result-card{background:var(--bg2);border-radius:14px;border:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;transition:background .15s}
+.result-card:hover{background:var(--bg3)}
+.r-av{width:46px;height:46px;border-radius:50%;background:#242424;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.r-name{font-size:14px;font-weight:500}
+.r-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.follow-btn{margin-left:auto;background:var(--accent);border:none;color:#fff;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.follow-btn.on{background:#242424;border:1px solid var(--border);color:var(--muted)}
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;justify-content:space-around;align-items:center;height:60px;border-top:1px solid var(--border);background:var(--bg)}
+.bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;transition:color .2s}
+.bn-btn.active{color:var(--accent)}
+.bn-ico{font-size:20px;line-height:1}.bn-lbl{font-size:8px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.bn-fab{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+@media(max-width:768px){.bnav{display:flex}body{padding-bottom:60px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="window.location.href='Flash.html'">←</button>
+  <input class="search-inp" id="search-inp" placeholder="Search VYBEOZA..." type="text" oninput="doSearch(this.value)" autofocus>
+</div>
+<div class="body">
+  <div class="tag-row">
+    <button class="tag on" onclick="setTag(this)">All</button>
+    <button class="tag" onclick="setTag(this)">Trending</button>
+    <button class="tag" onclick="setTag(this)">Music</button>
+    <button class="tag" onclick="setTag(this)">Gaming</button>
+    <button class="tag" onclick="setTag(this)">Art</button>
+    <button class="tag" onclick="setTag(this)">Tech</button>
+    <button class="tag" onclick="setTag(this)">Food</button>
+    <button class="tag" onclick="setTag(this)">Travel</button>
+  </div>
+  <div id="results"></div>
+</div>
+<div class="bnav">
+  <button class="bn-btn" onclick="window.location.href='Flash.html'"><span class="bn-ico">🏡</span><span class="bn-lbl">Flash</span></button>
+  <button class="bn-btn" onclick="window.location.href='flow.html'"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></button>
+  <button class="bn-fab" onclick="window.location.href='post.html'">＋</button>
+  <button class="bn-btn" onclick="window.location.href='hypo.html'"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></button>
+  <button class="bn-btn" onclick="window.location.href='base.html'"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></button>
+</div>
+<script>
+if(localStorage.getItem("vybeoza_logged_in") !== "true") window.location.href = "index.html";
+var USERS = [
+  {name:"Krishna",handle:"@krishna_vibe",emoji:"🎸",vibers:"12.1K"},
+  {name:"Suryansh",handle:"@suryansh_gg",emoji:"🎮",vibers:"5.6K"},
+  {name:"Arnav",handle:"@arnav_creates",emoji:"🏄",vibers:"9.2K"},
+  {name:"Riya",handle:"@riya.art",emoji:"🎨",vibers:"18K"},
+  {name:"Dev",handle:"@dev_rockets",emoji:"🚀",vibers:"3.1K"},
+  {name:"Meera",handle:"@meera.flow",emoji:"🌸",vibers:"31K"},
+];
+var results = document.getElementById("results");
+function renderUsers(list){
+  results.innerHTML = "";
+  list.forEach(function(u, i){
+    results.innerHTML +=
+      '<div class="result-card">' +
+        '<div class="r-av">' + u.emoji + '</div>' +
+        '<div><div class="r-name">' + u.name + '</div><div class="r-sub">' + u.handle + ' · ' + u.vibers + ' Vibers</div></div>' +
+        '<button class="follow-btn" id="fb-' + i + '" onclick="toggleFollow(' + i + ')">' + (localStorage.getItem("follow-"+u.handle) ? "Vibing" : "+ Vibe") + '</button>' +
+      '</div>';
+  });
+}
+renderUsers(USERS);
+function doSearch(v){
+  var filtered = USERS.filter(function(u){ return !v || u.name.toLowerCase().includes(v.toLowerCase()) || u.handle.toLowerCase().includes(v.toLowerCase()); });
+  renderUsers(filtered);
+}
+function setTag(el){ document.querySelectorAll(".tag").forEach(function(t){ t.classList.remove("on"); }); el.classList.add("on"); }
+function toggleFollow(idx){
+  var btn = document.getElementById("fb-" + idx);
+  var key = "follow-" + USERS[idx].handle;
+  if(localStorage.getItem(key)){
+    localStorage.removeItem(key);
+    btn.textContent = "+ Vibe";
+    btn.classList.remove("on");
+  } else {
+    localStorage.setItem(key, "true");
+    btn.textContent = "Vibing";
+    btn.classList.add("on");
+  }
+}
+// Pre-select from URL
+var params = new URLSearchParams(window.location.search);
+var q = params.get("q");
+if(q){ document.getElementById("search-inp").value = q; doSearch(q); }
+</script>
+</body>
+</html>

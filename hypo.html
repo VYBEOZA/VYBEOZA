@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYBEOZA — Hypo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#242424;--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--text:#fff;--text2:#ccc;--muted:#777;--border:#272727;--font:"DM Sans",sans-serif;--brand:"Syne",sans-serif;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.back-btn{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 10px 4px 0}
+.page-title{font-family:var(--brand);font-size:20px;font-weight:700;flex:1}
+.icon-btn{background:none;border:none;color:var(--muted);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s}
+.icon-btn:hover{background:var(--bg3);color:var(--text)}
+.content{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* Chat list */
+.cl-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;text-decoration:none;color:inherit}
+.cl-item:hover{background:var(--bg2)}
+.cl-av{width:48px;height:48px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative}
+.online{position:absolute;bottom:2px;right:2px;width:12px;height:12px;background:var(--accent2);border-radius:50%;border:2.5px solid var(--bg)}
+.cl-info{flex:1;min-width:0}
+.cl-name{font-size:14px;font-weight:500}
+.cl-prev{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.cl-time{font-size:11px;color:var(--muted)}
+.cl-badge{background:var(--accent);color:#fff;border-radius:10px;font-size:10px;padding:2px 7px;font-weight:600}
+
+/* Chat window */
+.chat-win{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:20}
+.chat-win.open{transform:translateX(0)}
+.cw-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cw-back{background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;padding:4px 10px 4px 0}
+.cw-av{width:38px;height:38px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.cw-info{flex:1}
+.cw-name{font-size:14px;font-weight:500}
+.cw-status{font-size:11px;color:var(--accent2)}
+.cw-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin}
+.msg{max-width:70%;padding:9px 13px;border-radius:18px;font-size:13px;line-height:1.5}
+.msg-in{background:var(--bg3);color:var(--text2);align-self:flex-start;border-bottom-left-radius:4px}
+.msg-out{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--muted);padding:0 4px}
+.msg-time.r{text-align:right}
+
+/* Input */
+.cw-inp-area{position:relative;flex-shrink:0}
+.emoji-picker{position:absolute;bottom:62px;left:12px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:10px;display:none;flex-wrap:wrap;gap:5px;width:288px;z-index:5;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.emoji-picker.open{display:flex}
+.ep-btn{background:none;border:none;font-size:22px;cursor:pointer;padding:4px;border-radius:8px;transition:background .15s}
+.ep-btn:hover{background:var(--bg3)}
+.cw-row{display:flex;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--border)}
+.cw-inp{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:22px;padding:9px 16px;color:var(--text);font-size:13px;outline:none;font-family:var(--font);transition:border .2s}
+.cw-inp:focus{border-color:var(--accent3)}
+.cw-inp::placeholder{color:var(--muted)}
+.ico-btn{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;transition:color .2s}
+.ico-btn:hover{color:var(--accent2)}
+.send-btn{width:36px;height:36px;background:var(--accent);border:none;border-radius:50%;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s}
+.send-btn:hover{opacity:.85}
+
+.bnav{display:none;justify-content:space-around;align-items:center;height:60px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;transition:color .2s}
+.bn-btn.active{color:var(--accent)}
+.bn-ico{font-size:20px;line-height:1}
+.bn-lbl{font-size:8px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.bn-fab{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:8px 20px;border-radius:20px;font-size:12px;opacity:0;transition:.3s;white-space:nowrap;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+@media(max-width:768px){.bnav{display:flex}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="back-btn" onclick="window.location.href='Flash.html'">←</button>
+    <div class="page-title">Hypo</div>
+    <button class="icon-btn" onclick="toast('New Message')">✏️</button>
+    <button class="icon-btn" onclick="toast('Search messages')">🔎</button>
+  </div>
+  <div class="content" id="chat-list"></div>
+  <div class="bnav">
+    <button class="bn-btn" onclick="window.location.href='Flash.html'"><span class="bn-ico">🏡</span><span class="bn-lbl">Flash</span></button>
+    <button class="bn-btn" onclick="window.location.href='flow.html'"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></button>
+    <button class="bn-fab" onclick="window.location.href='post.html'">＋</button>
+    <button class="bn-btn active"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></button>
+    <button class="bn-btn" onclick="window.location.href='base.html'"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></button>
+  </div>
+</div>
+
+<!-- Chat Window -->
+<div class="chat-win" id="chat-win">
+  <div class="cw-hdr">
+    <button class="cw-back" onclick="closeChat()">←</button>
+    <div class="cw-av" id="cw-av"></div>
+    <div class="cw-info"><div class="cw-name" id="cw-name"></div><div class="cw-status">Active now</div></div>
+    <button class="icon-btn" onclick="toast('Voice call')">📞</button>
+    <button class="icon-btn" onclick="toast('Video call')">📹</button>
+    <button class="icon-btn" onclick="toast('Info')">ℹ️</button>
+  </div>
+  <div class="cw-msgs" id="cw-msgs"></div>
+  <div class="cw-inp-area">
+    <div class="emoji-picker" id="emoji-picker">
+      <button class="ep-btn" onclick="addEmoji('😂')">😂</button>
+      <button class="ep-btn" onclick="addEmoji('🔥')">🔥</button>
+      <button class="ep-btn" onclick="addEmoji('❤️')">❤️</button>
+      <button class="ep-btn" onclick="addEmoji('👍')">👍</button>
+      <button class="ep-btn" onclick="addEmoji('😍')">😍</button>
+      <button class="ep-btn" onclick="addEmoji('🎉')">🎉</button>
+      <button class="ep-btn" onclick="addEmoji('😭')">😭</button>
+      <button class="ep-btn" onclick="addEmoji('🙏')">🙏</button>
+      <button class="ep-btn" onclick="addEmoji('💯')">💯</button>
+      <button class="ep-btn" onclick="addEmoji('🚀')">🚀</button>
+      <button class="ep-btn" onclick="addEmoji('😎')">😎</button>
+      <button class="ep-btn" onclick="addEmoji('✨')">✨</button>
+      <button class="ep-btn" onclick="addEmoji('🎵')">🎵</button>
+      <button class="ep-btn" onclick="addEmoji('💪')">💪</button>
+      <button class="ep-btn" onclick="addEmoji('🤣')">🤣</button>
+      <button class="ep-btn" onclick="addEmoji('😊')">😊</button>
+    </div>
+    <div class="cw-row">
+      <button class="ico-btn" onclick="toggleEmoji()">😊</button>
+      <button class="ico-btn" onclick="toast('Send media')">📎</button>
+      <button class="ico-btn" onclick="toast('Voice message')">🎤</button>
+      <input class="cw-inp" id="cw-inp" placeholder="Message..." onkeydown="if(event.key==='Enter') sendMsg()">
+      <button class="send-btn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+if(localStorage.getItem("vybeoza_logged_in") !== "true") window.location.href = "index.html";
+
+function toast(t){ var x=document.getElementById("toast"); x.textContent=t; x.classList.add("show"); clearTimeout(window._tt); window._tt=setTimeout(function(){ x.classList.remove("show"); },1600); }
+
+var USERS = [
+  {name:"Krishna",emoji:"🎸",online:true},
+  {name:"Suryansh",emoji:"🎮",online:true},
+  {name:"Arnav",emoji:"🏄",online:false},
+  {name:"Riya",emoji:"🎨",online:false},
+  {name:"Dev",emoji:"🚀",online:false},
+  {name:"Meera",emoji:"🌸",online:false},
+];
+var PREVIEWS = ["See you at 9 PM! 👋","That Flow was 🔥🔥","Let's collab sometime?","Just dropped a new VISO!","Thanks for the Vibers! 🙏","The edit came out insane"];
+var TIMES = ["now","2m","15m","1h","3h","6h"];
+var CHATS = [
+  [{f:"in",t:"Bhai what's up!"},{f:"out",t:"All good, just posted a new VISO"},{f:"in",t:"Saw it! 🔥 Fire bro"},{f:"out",t:"Thanks legend!"}],
+  [{f:"in",t:"Did you see my latest Flow?"},{f:"out",t:"Yes!! Editing was insane"},{f:"in",t:"Worked on it for 3 days haha"},{f:"out",t:"It shows bro, respect 🙌"}],
+  [{f:"out",t:"Hey let's collab?"},{f:"in",t:"Say less, I'm in!"},{f:"out",t:"Meet next week then"}],
+  [{f:"in",t:"Your Base is looking 🔥"},{f:"out",t:"Just updated it today!"},{f:"in",t:"Love the new bio 😂"}],
+  [{f:"out",t:"New VISO dropping tonight"},{f:"in",t:"I'll be watching!"},{f:"in",t:"What time?"},{f:"out",t:"Around 9 PM"}],
+  [{f:"in",t:"Vibers going crazy on your post"},{f:"out",t:"Wasn't expecting that!"},{f:"in",t:"You went viral bro 🚀"}],
+];
+
+var list = document.getElementById("chat-list");
+USERS.forEach(function(u, i){
+  list.innerHTML +=
+    '<a class="cl-item" onclick="openChat(' + i + ');return false" href="#">' +
+      '<div class="cl-av">' + u.emoji + (u.online ? '<div class="online"></div>' : '') + '</div>' +
+      '<div class="cl-info">' +
+        '<div class="cl-name">' + u.name + '</div>' +
+        '<div class="cl-prev">' + PREVIEWS[i] + '</div>' +
+      '</div>' +
+      '<div class="cl-right">' +
+        '<div class="cl-time">' + TIMES[i] + '</div>' +
+        (i < 3 ? '<div class="cl-badge">' + (i+1) + '</div>' : '') +
+      '</div>' +
+    '</a>';
+});
+
+function openChat(idx){
+  var u = USERS[idx];
+  document.getElementById("cw-av").textContent = u.emoji;
+  document.getElementById("cw-name").textContent = u.name;
+  var msgs = document.getElementById("cw-msgs");
+  msgs.innerHTML = "";
+  CHATS[idx].forEach(function(m){
+    msgs.innerHTML += '<div class="msg msg-' + (m.f === "in" ? "in" : "out") + '">' + m.t + '</div>';
+  });
+  document.getElementById("chat-win").classList.add("open");
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function closeChat(){ document.getElementById("chat-win").classList.remove("open"); }
+function sendMsg(){
+  var inp = document.getElementById("cw-inp");
+  var val = inp.value.trim(); if(!val) return;
+  var msgs = document.getElementById("cw-msgs");
+  msgs.innerHTML += '<div class="msg msg-out">' + val + '</div><div class="msg-time r">now</div>';
+  inp.value = ""; msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(function(){ msgs.innerHTML += '<div class="msg msg-in">That\'s cool! 🔥</div><div class="msg-time">now</div>'; msgs.scrollTop = msgs.scrollHeight; }, 1200);
+}
+function toggleEmoji(){ document.getElementById("emoji-picker").classList.toggle("open"); }
+function addEmoji(e){ var inp=document.getElementById("cw-inp"); inp.value+=e; inp.focus(); document.getElementById("emoji-picker").classList.remove("open"); }
+document.addEventListener("click", function(e){
+  var ep = document.getElementById("emoji-picker");
+  if(ep && !ep.contains(e.target) && e.target.textContent !== "😊") ep.classList.remove("open");
+});
+</script>
+</body>
+</html>
