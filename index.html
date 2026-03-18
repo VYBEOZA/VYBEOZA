@@ -1268,11 +1268,17 @@ function sendMsg() {
   var val = inp.value.trim();
   if (!val) return;
   var msgs = document.getElementById("cw-msgs");
-  msgs.innerHTML += '<div class="msg-out">' + val + '</div><div class="msg-time r">now</div>';
+  var outDiv = document.createElement("div");
+  outDiv.className = "msg-out";
+  outDiv.textContent = val;
+  msgs.appendChild(outDiv);
   inp.value = "";
   msgs.scrollTop = msgs.scrollHeight;
   setTimeout(function() {
-    msgs.innerHTML += "<div class="msg-in">Nice! 🔥</div><div class="msg-time">now</div>";
+    var inDiv = document.createElement("div");
+    inDiv.className = "msg-in";
+    inDiv.textContent = "Nice! 🔥";
+    msgs.appendChild(inDiv);
     msgs.scrollTop = msgs.scrollHeight;
   }, 1200);
 }
