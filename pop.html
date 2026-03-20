@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VYBEOZA - Pop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--text:#fff;--text2:#ccc;--muted:#777;--border:#272727;--font:"DM Sans",sans-serif;--brand:"Syne",sans-serif}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+.topbar{position:sticky;top:0;height:52px;background:var(--bg);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:50;border-bottom:1px solid var(--border)}
+.back-btn{background:none;border:none;color:var(--text);font-size:20px;padding:4px 8px 4px 0}
+.topbar h2{font-family:var(--brand);font-size:18px;font-weight:700;flex:1}
+.mark-btn{background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer}
+.content{max-width:600px;margin:0 auto;padding:0 0 80px}
+.sec-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:10px 14px 5px;font-weight:600}
+.n-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-left:3px solid transparent}
+.n-item:hover{background:var(--bg2)}
+.n-item.unread{background:#ff2d780a;border-left-color:var(--accent)}
+.n-ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ni-like{background:#ff2d7820}
+.ni-comment{background:#a259ff20}
+.ni-follow{background:#00f0c820}
+.ni-money{background:#ffd70020}
+.ni-login{background:#4285f420}
+.n-body{flex:1}
+.n-txt{font-size:12px;line-height:1.5;color:var(--text2)}
+.n-txt b{color:var(--text);font-weight:600}
+.n-time{font-size:10px;color:var(--muted);margin-top:3px}
+.n-thumb{width:40px;height:40px;border-radius:6px;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg);border-top:1px solid var(--border);z-index:100;justify-content:space-around;align-items:center}
+.bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;text-decoration:none}
+.bn-ico{font-size:19px;line-height:1}
+.bn-lbl{font-size:7px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.bn-fab{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+@media(max-width:768px){.bnav{display:flex}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Pop</h2>
+  <button class="mark-btn" onclick="markAllRead()">Mark all read</button>
+</div>
+<div class="content">
+  <div class="sec-lbl">Today</div>
+  <div id="today-list"></div>
+  <div class="sec-lbl">This Week</div>
+  <div id="week-list"></div>
+</div>
+<div class="bnav">
+  <a class="bn-btn" href="flash.html"><span class="bn-ico">🏡</span><span class="bn-lbl">Flash</span></a>
+  <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
+  <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
+  <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
+  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+</div>
+<script>
+var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html';
+var todayNotifs=[
+  {cls:'ni-like',ico:'❤️',name:'Krishna',text:'liked your video <b>My VYBEOZA Journey</b>',time:'2 minutes ago',thumb:'🎬',unread:true},
+  {cls:'ni-comment',ico:'💬',name:'Suryansh',text:'commented: <b>"This is fire! 🔥"</b> on your video',time:'15 minutes ago',thumb:'💬',unread:true},
+  {cls:'ni-follow',ico:'👤',name:'Arnav',text:'started <b>Vibing</b> with you',time:'1 hour ago',thumb:'⭐',unread:true},
+  {cls:'ni-login',ico:'🔐',name:'VYBEOZA',text:'New login detected from <b>Varanasi, India 📍</b>',time:'2 hours ago',thumb:'🔐',unread:false},
+  {cls:'ni-like',ico:'🎬',name:'TechVyber',text:'uploaded a new video: <b>AI Future 2025</b> — you are Vibing',time:'3 hours ago',thumb:'📹',unread:false}
+];
+var weekNotifs=[
+  {cls:'ni-follow',ico:'👤',name:'Riya',text:'started <b>Vibing</b> with you',time:'2 days ago',thumb:'⭐',unread:false},
+  {cls:'ni-like',ico:'❤️',name:'Dev',text:'liked your Flow <b>#5</b>',time:'3 days ago',thumb:'📽️',unread:false},
+  {cls:'ni-comment',ico:'💬',name:'Meera',text:'replied to your comment: <b>"Totally agree!"</b>',time:'4 days ago',thumb:'💬',unread:false},
+  {cls:'ni-money',ico:'💰',name:'VYBEOZA',text:'Your video reached <b>1,000 views!</b> Keep it up 🎉',time:'5 days ago',thumb:'🏆',unread:false},
+  {cls:'ni-follow',ico:'👤',name:'GameVybe',text:'uploaded a new video you might like',time:'6 days ago',thumb:'📹',unread:false}
+];
+function renderList(items,containerId){
+  var el=document.getElementById(containerId); el.innerHTML='';
+  items.forEach(function(n){
+    var d=document.createElement('div'); d.className='n-item'+(n.unread?' unread':'');
+    d.innerHTML='<div class="n-ico '+n.cls+'">'+n.ico+'</div>'
+      +'<div class="n-body"><div class="n-txt"><b>'+n.name+'</b> '+n.text+'</div><div class="n-time">'+n.time+'</div></div>'
+      +'<div class="n-thumb">'+n.thumb+'</div>';
+    d.onclick=function(){n.unread=false;d.classList.remove('unread');};
+    el.appendChild(d);
+  });
+}
+function markAllRead(){
+  todayNotifs.forEach(function(n){n.unread=false;});
+  weekNotifs.forEach(function(n){n.unread=false;});
+  document.querySelectorAll('.n-item').forEach(function(el){el.classList.remove('unread');});
+}
+renderList(todayNotifs,'today-list');
+renderList(weekNotifs,'week-list');
+</script>
+</body>
+</html>
