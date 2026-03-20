@@ -305,7 +305,7 @@ var notInt = JSON.parse(localStorage.getItem('vyb_notint')||'[]');
 // PREFO
 function buildPrefo(){
   var bar = document.getElementById('prefo-row');
-  bar.innerHTML = '<div class="pcard padd" onclick="window.location.href=\'post.html\'"><div class="padd-ico">＋</div><div style="font-size:9px;color:var(--muted)">Add Prefo</div></div>';
+  bar.innerHTML = '<div class="pcard padd" onclick="window.location.href=\'prefo.html\'"><div class="padd-ico">＋</div><div style="font-size:9px;color:var(--muted)">Add Prefo</div></div>';
   USERS.forEach(function(u,i){
     var div = document.createElement('div');
     div.className = 'pcard' + (i<2?' viewed':'');
