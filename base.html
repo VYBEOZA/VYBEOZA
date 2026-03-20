@@ -113,11 +113,14 @@ button{font-family:var(--font);cursor:pointer}
 <!-- BANNER -->
 <div style="position:relative">
   <div class="banner" id="banner">
-    <button class="edit-cover" onclick="toast('Edit cover photo')">Edit cover</button>
+    <button class="edit-cover" onclick="document.getElementById('cover-inp').click()">📷 Edit cover</button>
+    <input type="file" id="cover-inp" accept="image/*" style="display:none" onchange="uploadCover(this)">
   </div>
-  <div class="av-ring" style="position:absolute">
+  <div class="av-ring" style="position:absolute;cursor:pointer" onclick="document.getElementById('av-inp').click()" title="Change profile photo">
     <div class="av-inner" id="av-inner">V</div>
+    <div id="av-edit-icon" style="position:absolute;bottom:0;right:0;width:24px;height:24px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--bg)">📷</div>
   </div>
+  <input type="file" id="av-inp" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
 </div>
 
 <!-- LAYOUT -->
@@ -200,6 +203,19 @@ document.getElementById('disp-handle').textContent = '@'+(user.username||'vybeoz
 document.getElementById('topbar-handle').textContent = '@'+(user.username||'vybeozauser');
 document.getElementById('av-inner').textContent = (user.name||'V')[0].toUpperCase();
 document.getElementById('stat-vibers').textContent = user.vibers || '0';
+
+// Load avatar if exists
+if(user.avatar){
+  var av = document.getElementById('av-inner');
+  av.innerHTML = '<img src="'+user.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+}
+// Load cover if exists
+if(user.cover){
+  var banner = document.getElementById('banner');
+  banner.style.backgroundImage = 'url('+user.cover+')';
+  banner.style.backgroundSize = 'cover';
+  banner.style.backgroundPosition = 'center';
+}
 document.getElementById('stat-vibing').textContent = user.vibing || '0';
 
 // Privacy
@@ -226,6 +242,63 @@ function doLogout(){ if(confirm('Log out?')){ localStorage.removeItem('vyb_user'
 function editProfile(){
   var name = prompt('Display name:', user.name||'');
   if(name){ user.name=name; localStorage.setItem('vyb_user',JSON.stringify(user)); document.getElementById('disp-name').textContent=name; document.getElementById('av-inner').textContent=name[0].toUpperCase(); toast('Profile updated!'); }
+}
+
+// CLOUDINARY CONFIG
+var CL_CLOUD = 'dnhsfd80r';
+var CL_PRESET = 'vybeoza_uploads';
+
+async function uploadToCloudinary(file, folder){
+  var fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CL_PRESET);
+  fd.append('folder', folder);
+  var r = await fetch('https://api.cloudinary.com/v1_1/'+CL_CLOUD+'/auto/upload', {method:'POST', body:fd});
+  var data = await r.json();
+  return data.secure_url;
+}
+
+async function uploadAvatar(inp){
+  var file = inp.files[0]; if(!file) return;
+  toast('Uploading photo... ⏳');
+  var av = document.getElementById('av-inner');
+  av.style.opacity = '0.5';
+  try {
+    var url = await uploadToCloudinary(file, 'vybeoza/avatars');
+    // Save to localStorage
+    user.avatar = url;
+    localStorage.setItem('vyb_user', JSON.stringify(user));
+    // Update accounts too
+    var accounts = JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+    accounts = accounts.map(function(a){ if(a.username===user.username){ a.avatar=url; } return a; });
+    localStorage.setItem('vyb_accounts', JSON.stringify(accounts));
+    // Show image
+    av.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+    av.style.opacity = '1';
+    toast('Profile photo updated! ✅');
+    // Update Supabase if logged in
+    if(user.sb_token && user.sb_uid){
+      fetch('https://vhwodzssytkcbicrtunn.supabase.co/rest/v1/profiles?id=eq.'+user.sb_uid, {
+        method:'PATCH',
+        headers:{'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M','Authorization':'Bearer '+user.sb_token,'Content-Type':'application/json'},
+        body: JSON.stringify({avatar_url: url})
+      });
+    }
+  } catch(e){ av.style.opacity='1'; toast('Upload failed. Try again!'); }
+}
+
+async function uploadCover(inp){
+  var file = inp.files[0]; if(!file) return;
+  toast('Uploading cover... ⏳');
+  try {
+    var url = await uploadToCloudinary(file, 'vybeoza/covers');
+    document.getElementById('banner').style.backgroundImage = 'url('+url+')';
+    document.getElementById('banner').style.backgroundSize = 'cover';
+    document.getElementById('banner').style.backgroundPosition = 'center';
+    user.cover = url;
+    localStorage.setItem('vyb_user', JSON.stringify(user));
+    toast('Cover photo updated! ✅');
+  } catch(e){ toast('Upload failed. Try again!'); }
 }
 
 // Tabs
