@@ -331,6 +331,13 @@ function buildChips(){
 function buildGrid(){
   var grid = document.getElementById('feed-grid');
   grid.innerHTML = '';
+
+  // Use real posts if available
+  if(realPosts.length > 0){
+    buildRealGrid(grid);
+    return;
+  }
+
   var pool = [];
   for(var i=0;i<12;i++){ if(notInt.indexOf(i)<0) pool.push({idx:i,w:(watchHist[i]||0)+Math.random()*.3}); }
   pool.sort(function(a,b){return b.w-a.w;});
@@ -398,7 +405,59 @@ function prevStory(){if(sv.si>0){sv.si--;showSlide();}else if(sv.ui>0){sv.ui--;s
 function closeStory(){clearTimeout(sv.timer);document.getElementById('story-viewer').classList.remove('open');}
 function sendStoryReply(){var inp=document.getElementById('sv-reply-inp');if(inp.value.trim()){toast('Reply sent!');inp.value='';}}
 
-buildPrefo(); buildChips(); buildGrid();
+function buildRealGrid(grid){
+  // Mix local posts too
+  var localPosts = JSON.parse(localStorage.getItem('vyb_posts')||'[]');
+  var allPosts = realPosts.concat(localPosts);
+  allPosts.forEach(function(post, pos){
+    // Ad at position 3 and 8
+    if(pos===3||pos===8){
+      var adBox=document.createElement('div'); adBox.className='ad-box';
+      var atag=document.createElement('div'); atag.className='ad-tag'; atag.textContent='Ad';
+      var aimg=document.createElement('div'); aimg.className='ad-img'; aimg.textContent='🎯';
+      var acls=document.createElement('button'); acls.className='ad-close'; acls.textContent='✕';
+      acls.onclick=function(e){e.stopPropagation();adBox.style.display='none';};
+      var abody=document.createElement('div'); abody.className='ad-body';
+      abody.innerHTML='<div class="ad-title">Boost your brand on VYBEOZA</div><div class="ad-cta">Advertise now →</div>';
+      adBox.appendChild(atag);adBox.appendChild(aimg);adBox.appendChild(acls);adBox.appendChild(abody);
+      grid.appendChild(adBox);
+    }
+    var card = document.createElement('div'); card.className='vcard';
+    var hasMedia = post.media_url && post.media_url.length > 0;
+    var isVideo = post.media_type === 'flow' || (post.media_url && post.media_url.includes('.mp4'));
+    var thumbHtml = '';
+    if(hasMedia && !isVideo){
+      thumbHtml = '<img src="'+post.media_url+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">';
+    } else if(hasMedia && isVideo){
+      thumbHtml = '<video src="'+post.media_url+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" muted></video>';
+    } else {
+      thumbHtml = '<div class="vbg" style="background:'+GRADS[pos%GRADS.length]+'"></div><div class="vlbl">'+(post.title||'VISO')+'</div>';
+    }
+    var dur = isVideo ? '0:30' : '';
+    card.innerHTML = '<div class="vthumb" style="cursor:pointer">'
+      +thumbHtml
+      +(dur?'<div class="vdur">'+dur+'</div>':'')
+      +'<div class="play-overlay">▶</div>'
+      +'</div>'
+      +'<div class="vinfo">'
+      +'<div class="vav">'+(post.avatar?'<img src="'+post.avatar+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">':(post.username||'V')[0].toUpperCase())+'</div>'
+      +'<div class="vmeta"><div class="vtitle">'+(post.title||'Untitled')+'</div>'
+      +'<div class="vsub">'+(post.username||'User')+' · '+(post.views||0)+' views</div></div>'
+      +'</div>';
+    card.querySelector('.vthumb').onclick = function(){
+      localStorage.setItem('vyb_watch_post', JSON.stringify(post));
+      localStorage.setItem('vyb_cur', pos);
+      window.location.href='watch.html';
+    };
+    grid.appendChild(card);
+  });
+  // If no posts at all
+  if(allPosts.length===0){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">No posts yet! Be the first to post 🚀<br><br><a href="post.html" style="color:var(--accent);text-decoration:none;font-weight:600">+ Create a Post</a></div>';
+  }
+}
+
+buildPrefo(); buildChips(); buildGrid(); loadRealPosts();
 </script>
 </body>
 </html>
