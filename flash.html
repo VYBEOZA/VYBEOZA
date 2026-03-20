@@ -220,7 +220,7 @@ button,input{font-family:var(--font);cursor:pointer}
   <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
   <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
   <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
-  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+  <a class="bn-btn" href="creator.html"><span class="bn-ico">🎬</span><span class="bn-lbl">Center</span></a>
 </div>
 
 <!-- STORY VIEWER -->
@@ -269,7 +269,7 @@ else {
   if(av) av.textContent = (user.name||'V')[0].toUpperCase();
   // Apply user color if set
   var uc = localStorage.getItem('vyb_color');
-  if(uc) document.documentElement.style.setProperty('--user-color', uc);
+  if(uc){ document.documentElement.style.setProperty('--user-color', uc); document.documentElement.style.setProperty('--accent', uc); }
 }
 document.getElementById('sb-logout').onclick = function(){
   if(confirm('Log out?')){ localStorage.removeItem('vyb_user'); window.location.href = 'index.html'; }
