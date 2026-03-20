@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VYBEOZA - Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#242424;--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--text:#fff;--text2:#ccc;--muted:#777;--border:#272727;--font:"DM Sans",sans-serif;--brand:"Syne",sans-serif;--user-color:#ff2d78}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+button{font-family:var(--font);cursor:pointer}
+.topbar{position:sticky;top:0;height:52px;background:var(--bg);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:50;border-bottom:1px solid var(--border)}
+.back-btn{background:none;border:none;color:var(--text);font-size:20px;padding:4px 8px 4px 0}
+.topbar h2{font-family:var(--brand);font-size:18px;font-weight:700}
+.inner{max-width:600px;margin:0 auto;padding:14px;padding-bottom:80px}
+.sec-lbl{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 6px;font-weight:600;padding:0 2px}
+.set-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg2);border-radius:10px;margin-bottom:6px;border:none;color:var(--text);width:100%;text-align:left;transition:background .15s}
+.set-item:hover{background:var(--bg3)}
+.si-left{display:flex;align-items:center;gap:10px}
+.si-ico{font-size:17px;width:24px;text-align:center}
+.si-text{font-size:13px;font-weight:500}
+.si-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.si-arrow{color:var(--muted);font-size:13px}
+.toggle{width:42px;height:24px;background:var(--bg4);border-radius:12px;position:relative;border:none;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+
+/* PRIVACY OPTIONS */
+.priv-opts{background:var(--bg2);border-radius:10px;overflow:hidden;margin-bottom:6px}
+.priv-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:none;background:none;color:var(--text);width:100%;text-align:left;cursor:pointer;transition:background .15s}
+.priv-opt:hover{background:var(--bg3)}
+.priv-opt.on{background:var(--bg3)}
+.priv-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);margin-left:auto;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.priv-opt.on .priv-check{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* COLOR PICKER */
+.color-section{background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:6px}
+.color-title{font-size:13px;font-weight:500;margin-bottom:12px}
+.color-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.color-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;flex-shrink:0}
+.color-swatch.selected{border-color:#fff;transform:scale(1.15)}
+.color-swatch:hover{transform:scale(1.1)}
+.custom-color-row{display:flex;align-items:center;gap:10px}
+.custom-color-inp{width:50px;height:36px;border:none;border-radius:8px;background:none;cursor:pointer;padding:0}
+.custom-lbl{font-size:12px;color:var(--muted)}
+.apply-color-btn{background:var(--accent);border:none;color:#fff;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-left:auto}
+
+/* ABOUT */
+.about-box{background:var(--bg2);border-radius:12px;padding:16px;margin-bottom:6px}
+.about-title{font-family:var(--brand);font-size:18px;font-weight:800;background:linear-gradient(90deg,#ff2d78,#a259ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.about-ver{font-size:11px;color:var(--muted);margin-bottom:14px}
+.about-sec{font-size:13px;font-weight:600;color:var(--accent3);margin-bottom:6px;margin-top:12px}
+.about-txt{font-size:12px;color:var(--text2);line-height:1.7}
+.about-hl{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.about-hl-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:3px}
+.about-hl-txt{font-size:11px;color:var(--text2);line-height:1.6}
+
+/* LANG SELECT */
+.lang-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;outline:none;width:100%;margin-top:4px}
+
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.sheet-bg.open{display:flex}
+.sheet-box{background:var(--bg2);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto}
+.sheet-cancel{width:100%;background:var(--bg3);border:none;color:var(--text);padding:12px;border-radius:10px;font-size:13px;font-weight:500;margin-top:10px;cursor:pointer}
+
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg);border-top:1px solid var(--border);z-index:100;justify-content:space-around;align-items:center}
+.bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;text-decoration:none}
+.bn-ico{font-size:19px;line-height:1}
+.bn-lbl{font-size:7px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.bn-fab{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:7px 18px;border-radius:18px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+@media(max-width:768px){.bnav{display:flex}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Settings & Privacy</h2>
+</div>
+<div class="inner">
+
+  <!-- PRIVACY -->
+  <div class="sec-lbl">Account Privacy</div>
+  <div class="priv-opts">
+    <button class="priv-opt on" id="po-pub" onclick="setPriv('public')">
+      <span style="font-size:17px">🌐</span>
+      <div><div style="font-size:13px;font-weight:500">Public</div><div style="font-size:10px;color:var(--muted);margin-top:1px">Anyone can see your Base & VISOs</div></div>
+      <div class="priv-check" id="pc-pub">✓</div>
+    </button>
+    <button class="priv-opt" id="po-vib" onclick="setPriv('vibers')">
+      <span style="font-size:17px">👥</span>
+      <div><div style="font-size:13px;font-weight:500">Vibers Only</div><div style="font-size:10px;color:var(--muted);margin-top:1px">Only your Vibers can see your content</div></div>
+      <div class="priv-check" id="pc-vib"></div>
+    </button>
+    <button class="priv-opt" id="po-priv" onclick="setPriv('private')">
+      <span style="font-size:17px">🔒</span>
+      <div><div style="font-size:13px;font-weight:500">Private</div><div style="font-size:10px;color:var(--muted);margin-top:1px">Only you can see. Friends must request.</div></div>
+      <div class="priv-check" id="pc-priv"></div>
+    </button>
+  </div>
+
+  <!-- THEME / COLOR -->
+  <div class="sec-lbl">Appearance & Color</div>
+  <div class="color-section">
+    <div class="color-title">App Accent Color — tap to apply instantly</div>
+    <div class="color-grid" id="color-grid"></div>
+    <div class="custom-color-row">
+      <input type="color" class="custom-color-inp" id="custom-color" value="#ff2d78" oninput="previewColor(this.value)">
+      <span class="custom-lbl">Custom color</span>
+      <button class="apply-color-btn" onclick="applyColor(document.getElementById('custom-color').value)">Apply</button>
+    </div>
+  </div>
+  <button class="set-item" id="set-dark" onclick="toggleDark()">
+    <div class="si-left"><span class="si-ico">🌙</span><div><div class="si-text">Dark Mode</div><div class="si-sub" id="dark-sub">Currently dark</div></div></div>
+    <div class="toggle on" id="tog-dark"></div>
+  </button>
+
+  <!-- LANGUAGE -->
+  <div class="sec-lbl">Language</div>
+  <div style="background:var(--bg2);border-radius:10px;padding:12px 14px;margin-bottom:6px">
+    <div style="font-size:13px;font-weight:500;margin-bottom:6px">🌐 App Language</div>
+    <select class="lang-select" id="lang-sel" onchange="toast('Language set to: '+this.options[this.selectedIndex].text)">
+      <option>English</option><option>Hindi</option><option>Bengali</option>
+      <option>Telugu</option><option>Marathi</option><option>Tamil</option>
+      <option>Gujarati</option><option>Urdu</option><option>Punjabi</option>
+    </select>
+  </div>
+  <button class="set-item" onclick="toggleTog('tog-dub')">
+    <div class="si-left"><span class="si-ico">🎙️</span><div><div class="si-text">Auto-Dubbing</div><div class="si-sub">Translate videos automatically</div></div></div>
+    <div class="toggle on" id="tog-dub"></div>
+  </button>
+
+  <!-- NOTIFICATIONS -->
+  <div class="sec-lbl">Notifications</div>
+  <button class="set-item" onclick="toggleTog('tog-likes')">
+    <div class="si-left"><span class="si-ico">❤️</span><div><div class="si-text">Likes</div></div></div>
+    <div class="toggle on" id="tog-likes"></div>
+  </button>
+  <button class="set-item" onclick="toggleTog('tog-cmts')">
+    <div class="si-left"><span class="si-ico">💬</span><div><div class="si-text">Comments</div></div></div>
+    <div class="toggle on" id="tog-cmts"></div>
+  </button>
+  <button class="set-item" onclick="toggleTog('tog-vibers')">
+    <div class="si-left"><span class="si-ico">👤</span><div><div class="si-text">New Vibers</div></div></div>
+    <div class="toggle on" id="tog-vibers"></div>
+  </button>
+  <button class="set-item" onclick="toggleTog('tog-live')">
+    <div class="si-left"><span class="si-ico">🔴</span><div><div class="si-text">Live Notifications</div></div></div>
+    <div class="toggle on" id="tog-live"></div>
+  </button>
+
+  <!-- MONETIZATION -->
+  <div class="sec-lbl">Monetization</div>
+  <button class="set-item" onclick="window.location.href='creator.html'">
+    <div class="si-left"><span class="si-ico">💰</span><div><div class="si-text">Creator Dashboard</div><div class="si-sub">5,000 hrs + 1,500 Vibers needed</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
+  <button class="set-item" onclick="openAbout()">
+    <div class="si-left"><span class="si-ico">🏆</span><div><div class="si-text">Vybee Button</div><div class="si-sub">VYBEOZA creator achievement award</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
+
+  <!-- SECURITY -->
+  <div class="sec-lbl">Security</div>
+  <button class="set-item" onclick="changePw()">
+    <div class="si-left"><span class="si-ico">🔑</span><div><div class="si-text">Change Password</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
+  <button class="set-item" onclick="toggleTog('tog-2fa')">
+    <div class="si-left"><span class="si-ico">🛡️</span><div><div class="si-text">Two-Factor Authentication</div></div></div>
+    <div class="toggle" id="tog-2fa"></div>
+  </button>
+
+  <!-- ABOUT -->
+  <div class="sec-lbl">About</div>
+  <button class="set-item" onclick="openAbout()">
+    <div class="si-left"><span class="si-ico">ℹ️</span><div><div class="si-text">About VYBEOZA</div><div class="si-sub">Rules, monetization & creator guide</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
+
+  <!-- ACCOUNT -->
+  <div class="sec-lbl">Account</div>
+  <button class="set-item" style="color:#ff6b6b" onclick="doLogout()">
+    <div class="si-left"><span class="si-ico">🚪</span><div><div class="si-text" style="color:#ff6b6b">Log Out</div></div></div>
+  </button>
+  <div style="height:20px"></div>
+</div>
+
+<!-- ABOUT SHEET -->
+<div class="sheet-bg" id="about-sheet">
+  <div class="sheet-box">
+    <div class="about-title">VYBEOZA</div>
+    <div class="about-ver">Version 1.0.0 Beta · Made with ❤️ in Varanasi</div>
+    <div class="about-sec">🎯 What is VYBEOZA?</div>
+    <div class="about-txt">VYBEOZA is a next-generation social media platform — Flash (YouTube-style feed), Flow (Reels), Prefo (Stories), Hypo (Messaging). Share your vibe with the world!</div>
+    <div class="about-sec">💰 Monetization</div>
+    <div class="about-hl"><div class="about-hl-title">Vybee Button Requirements</div><div class="about-hl-txt">✅ 5,000 hours watch time<br>✅ 1,500 Vibers minimum<br>✅ Active account 30+ days<br>✅ No community violations</div></div>
+    <div class="about-hl"><div class="about-hl-title">After Vybee Button</div><div class="about-hl-txt">🏆 Monthly salary (watch hours based)<br>💸 Ad revenue sharing (70% to creator)<br>⚡ PowerChat in Live streams (80%)<br>🎁 Brand partnership opportunities<br>🎉 Creator events, gifts & trips</div></div>
+    <div class="about-sec">⚡ PowerChat (Live)</div>
+    <div class="about-txt">Viewers can send highlighted PowerChats during live streams to support creators. Min ₹20 · Max ₹5,000 per message. Creators get 80% of revenue.</div>
+    <div class="about-sec">📋 Community Rules</div>
+    <div class="about-txt">1. No hate speech or harassment<br>2. No copyright infringement<br>3. No misleading content<br>4. No spam or fake engagement<br>5. Respect all community members<br>6. Violations → demonetization or ban</div>
+    <div style="text-align:center;padding:14px 0;font-size:11px;color:var(--muted)">© 2025 VYBEOZA. All rights reserved.<br>Built with 🔥 in Varanasi, India</div>
+    <button class="sheet-cancel" onclick="document.getElementById('about-sheet').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<div class="bnav">
+  <a class="bn-btn" href="flash.html"><span class="bn-ico">🏡</span><span class="bn-lbl">Flash</span></a>
+  <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
+  <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
+  <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
+  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html';
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},1800);}
+function toggleTog(id){var el=document.getElementById(id);el.classList.toggle('on');toast(el.classList.contains('on')?'Enabled ✓':'Disabled');}
+
+// PRIVACY
+var curPriv=localStorage.getItem('vyb_private')==='true'?'private':(localStorage.getItem('vyb_priv_mode')||'public');
+function setPriv(p){
+  curPriv=p;
+  localStorage.setItem('vyb_priv_mode',p);
+  localStorage.setItem('vyb_private',p==='private');
+  ['pub','vib','priv'].forEach(function(k){ document.getElementById('po-'+k).classList.remove('on'); document.getElementById('pc-'+k).textContent=''; });
+  var map={public:'pub',vibers:'vib',private:'priv'};
+  document.getElementById('po-'+map[p]).classList.add('on');
+  document.getElementById('pc-'+map[p]).textContent='✓';
+  toast('Privacy: '+(p==='public'?'Public 🌐':p==='vibers'?'Vibers Only 👥':'Private 🔒'));
+}
+setPriv(curPriv);
+
+// COLOR
+var COLORS=[
+  {c:'#ff2d78',n:'Pink'},
+  {c:'#a259ff',n:'Purple'},
+  {c:'#00f0c8',n:'Teal'},
+  {c:'#4285f4',n:'Blue'},
+  {c:'#ff9900',n:'Orange'},
+  {c:'#00cc44',n:'Green'},
+  {c:'#ff4444',n:'Red'},
+  {c:'#ff69b4',n:'Hot Pink'},
+  {c:'#ffd700',n:'Gold'},
+  {c:'#00bcd4',n:'Cyan'}
+];
+var curColor=localStorage.getItem('vyb_color')||'#ff2d78';
+function buildColors(){
+  var grid=document.getElementById('color-grid');
+  COLORS.forEach(function(c){
+    var sw=document.createElement('div');
+    sw.className='color-swatch'+(c.c===curColor?' selected':'');
+    sw.style.background=c.c;
+    sw.title=c.n;
+    sw.onclick=function(){ applyColor(c.c); };
+    grid.appendChild(sw);
+  });
+  document.getElementById('custom-color').value=curColor;
+  applyColorToPage(curColor,false);
+}
+function previewColor(c){ applyColorToPage(c,false); }
+function applyColor(c){
+  curColor=c;
+  localStorage.setItem('vyb_color',c);
+  applyColorToPage(c,true);
+  document.querySelectorAll('.color-swatch').forEach(function(sw){ sw.classList.toggle('selected',sw.style.background===c||rgbToHex(sw.style.background)===c.toLowerCase()); });
+  document.getElementById('custom-color').value=c;
+  toast('Color applied! ✨');
+}
+function applyColorToPage(c,save){
+  document.documentElement.style.setProperty('--accent',c);
+  document.documentElement.style.setProperty('--user-color',c);
+}
+function rgbToHex(rgb){
+  try{var r=rgb.match(/\d+/g);return'#'+r.slice(0,3).map(function(x){return('0'+parseInt(x).toString(16)).slice(-2);}).join('');}catch(e){return rgb;}
+}
+buildColors();
+
+// DARK
+function toggleDark(){
+  var tog=document.getElementById('tog-dark');
+  tog.classList.toggle('on');
+  var isDark=tog.classList.contains('on');
+  document.documentElement.style.background=isDark?'#0a0a0a':'#f5f5f5';
+  document.getElementById('dark-sub').textContent=isDark?'Currently dark':'Currently light';
+  toast(isDark?'Dark mode on 🌙':'Light mode on ☀️');
+}
+
+// CHANGE PW
+function changePw(){
+  var np=prompt('Enter new password (min 6 chars):');
+  if(!np) return;
+  if(np.length<6){toast('Password too short!');return;}
+  if(user){user.password=np;localStorage.setItem('vyb_user',JSON.stringify(user));}
+  var accounts=JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+  accounts=accounts.map(function(a){if(a.username===user.username){a.password=np;}return a;});
+  localStorage.setItem('vyb_accounts',JSON.stringify(accounts));
+  toast('Password changed! ✅');
+}
+
+function openAbout(){ document.getElementById('about-sheet').classList.add('open'); }
+document.getElementById('about-sheet').onclick=function(e){if(e.target===this)this.classList.remove('open');};
+function doLogout(){ if(confirm('Log out?')){ localStorage.removeItem('vyb_user'); window.location.href='index.html'; } }
+</script>
+</body>
+</html>
