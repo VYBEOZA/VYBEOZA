@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VYBEOZA - Base</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#242424;--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--text:#fff;--text2:#ccc;--muted:#777;--border:#272727;--font:"DM Sans",sans-serif;--brand:"Syne",sans-serif;--user-color:#ff2d78}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+button{font-family:var(--font);cursor:pointer}
+
+.topbar{position:sticky;top:0;height:52px;background:var(--bg);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:50;border-bottom:1px solid var(--border)}
+.back-btn{background:none;border:none;color:var(--text);font-size:20px;padding:4px 8px 4px 0}
+.topbar h2{font-size:15px;font-weight:600;flex:1}
+.ico-btn{background:none;border:none;color:var(--muted);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
+.ico-btn:hover{background:var(--bg3);color:var(--text)}
+
+/* LAYOUT */
+.profile-layout{display:flex;gap:32px;padding:24px;max-width:960px;margin:0 auto}
+.profile-left{width:260px;flex-shrink:0}
+.profile-right{flex:1;min-width:0}
+@media(max-width:700px){.profile-layout{flex-direction:column;padding:14px}.profile-left{width:100%}}
+
+/* BANNER */
+.banner{height:110px;background:linear-gradient(135deg,var(--user-color)60,#a259ff30,#00f0c820);position:relative;flex-shrink:0}
+.edit-cover{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:7px;padding:4px 10px;font-size:11px;cursor:pointer}
+
+/* AVATAR */
+.av-ring{position:absolute;bottom:-34px;left:16px;width:76px;height:76px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--accent),var(--accent3),var(--accent2))}
+.av-inner{width:100%;height:100%;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid var(--bg);font-weight:700;color:#fff}
+
+/* INFO */
+.info-wrap{padding-top:42px}
+.display-name{font-family:var(--brand);font-size:19px;font-weight:800}
+.handle{font-size:12px;color:var(--muted);margin-top:2px}
+.priv-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:16px;font-size:11px;border:1px solid;margin-top:6px;background:none;cursor:pointer;transition:all .2s}
+.priv-badge.pub{border-color:var(--accent2);color:var(--accent2)}
+.priv-badge.priv{border-color:var(--accent3);color:var(--accent3)}
+.bio{font-size:12px;color:var(--text2);line-height:1.6;margin:10px 0}
+
+/* STATS */
+.stats-row{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;margin:12px 0}
+.stat{flex:1;text-align:center;border-right:1px solid var(--border);cursor:pointer}
+.stat:last-child{border:none}
+.stat-num{font-family:var(--brand);font-size:16px;font-weight:700}
+.stat-lbl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ACTION BUTTONS */
+.act-row{display:flex;gap:6px;margin-bottom:10px}
+.act-btn{flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:9px;font-size:11px;font-weight:500;transition:all .2s}
+.act-btn:hover{border-color:var(--accent);color:var(--accent)}
+.act-btn.pri{background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff}
+.act-btn.pri:hover{opacity:.88}
+
+/* 3-DOT MENU */
+.dots-wrap{position:relative;margin-bottom:10px}
+.dots-open-btn{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text2);padding:9px;border-radius:9px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.dots-open-btn:hover{border-color:var(--accent3)}
+.dots-dd{position:absolute;top:calc(100%+5px);left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;z-index:30;box-shadow:0 8px 32px rgba(0,0,0,.6);display:none}
+.dots-dd.open{display:block}
+.dd-row{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:12px;border:none;background:none;color:var(--text);width:100%;text-align:left;cursor:pointer;transition:background .15s}
+.dd-row:hover{background:var(--bg3)}
+.dd-row.red{color:#ff6b6b}
+.dd-sep{height:1px;background:var(--border)}
+
+/* TABS */
+.base-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:12px}
+.btab{flex:1;padding:10px 4px;font-size:11px;text-align:center;color:var(--muted);border-bottom:2px solid transparent;border:none;background:none;font-weight:500;cursor:pointer;transition:all .2s}
+.btab.on{color:var(--text);border-bottom-color:var(--accent)}
+
+/* GRID */
+.base-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.gcell{aspect-ratio:1;background:var(--bg3);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--bg4);cursor:pointer;position:relative;overflow:hidden;transition:opacity .2s}
+.gcell:hover{opacity:.8}
+.gcell-bg{position:absolute;inset:0;opacity:.4}
+.gcell-num{position:relative;z-index:1;font-size:9px;color:rgba(255,255,255,.5)}
+
+/* HISTORY */
+.h-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .2s}
+.h-item:hover{opacity:.8}
+.h-thumb{width:68px;height:46px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.h-title{font-size:12px;font-weight:500}
+.h-meta{font-size:10px;color:var(--muted);margin-top:2px}
+
+.tab-panel{display:none}.tab-panel.on{display:block}
+
+/* BOTTOM NAV */
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg);border-top:1px solid var(--border);z-index:100;justify-content:space-around;align-items:center}
+.bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;text-decoration:none}
+.bn-btn.on{color:var(--accent)}
+.bn-ico{font-size:19px;line-height:1}
+.bn-lbl{font-size:7px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.bn-fab{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #ff2d7840}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:7px 18px;border-radius:18px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+
+@media(max-width:768px){.bnav{display:flex};body{padding-bottom:60px}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2 id="topbar-handle">@username</h2>
+  <button class="ico-btn" onclick="toggleDots()">⋮</button>
+</div>
+
+<!-- BANNER -->
+<div style="position:relative">
+  <div class="banner" id="banner">
+    <button class="edit-cover" onclick="toast('Edit cover photo')">Edit cover</button>
+  </div>
+  <div class="av-ring" style="position:absolute">
+    <div class="av-inner" id="av-inner">V</div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="profile-layout">
+  <!-- LEFT -->
+  <div class="profile-left">
+    <div class="info-wrap">
+      <div class="display-name" id="disp-name">VYBEOZA User</div>
+      <div class="handle" id="disp-handle">@vybeozauser</div>
+      <button class="priv-badge pub" id="priv-badge" onclick="togglePrivacy()">🌐 Public</button>
+      <div class="bio" id="disp-bio">Spreading good vibes on VYBEOZA ✨<br>Content Creator · Varanasi 📍</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat" onclick="showTab('visos')"><div class="stat-num" id="stat-visos">0</div><div class="stat-lbl">VISOs</div></div>
+      <div class="stat"><div class="stat-num" id="stat-vibers">0</div><div class="stat-lbl">Vibers</div></div>
+      <div class="stat"><div class="stat-num" id="stat-vibing">0</div><div class="stat-lbl">Vibing</div></div>
+    </div>
+    <div class="act-row">
+      <button class="act-btn pri" onclick="editProfile()">Edit Base</button>
+      <button class="act-btn" onclick="toast('Share profile link copied!')">Share</button>
+    </div>
+    <button class="act-btn" style="width:100%;margin-bottom:10px" onclick="window.location.href='creator.html'">🎬 Creator Center</button>
+    <!-- 3-DOT MENU -->
+    <div class="dots-wrap">
+      <button class="dots-open-btn" id="dots-open-btn" onclick="toggleDots()">⋯ More Options</button>
+      <div class="dots-dd" id="dots-dd">
+        <button class="dd-row" onclick="goSettings()">⚙️ Settings & Privacy</button>
+        <button class="dd-row" onclick="window.location.href='creator.html'">🎬 Creator Center</button>
+        <button class="dd-row" onclick="showTab('history');closeDots()">🕐 Watch History</button>
+        <button class="dd-row" onclick="showTab('saved');closeDots()">🔖 Saved Videos</button>
+        <button class="dd-row" onclick="toast('Archive')">📦 Archive</button>
+        <button class="dd-row" onclick="toast('QR Code')">📱 QR Code</button>
+        <button class="dd-row" onclick="toast('Your Activity')">📊 Your Activity</button>
+        <div class="dd-sep"></div>
+        <button class="dd-row red" onclick="doLogout()">🚪 Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="profile-right">
+    <div class="base-tabs">
+      <button class="btab on" id="bt-visos" onclick="showTab('visos')">📹 VISOs</button>
+      <button class="btab" id="bt-flow" onclick="showTab('flow')">📽️ Flow</button>
+      <button class="btab" id="bt-saved" onclick="showTab('saved')">🔖 Saved</button>
+      <button class="btab" id="bt-history" onclick="showTab('history')">🕐 History</button>
+    </div>
+    <div class="tab-panel on" id="tp-visos"><div class="base-grid" id="grid-visos"></div></div>
+    <div class="tab-panel" id="tp-flow"><div class="base-grid" id="grid-flow"></div></div>
+    <div class="tab-panel" id="tp-saved"><div class="base-grid" id="grid-saved"></div></div>
+    <div class="tab-panel" id="tp-history"><div id="history-list"></div></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <a class="bn-btn" href="flash.html"><span class="bn-ico">🏡</span><span class="bn-lbl">Flash</span></a>
+  <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
+  <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
+  <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
+  <a class="bn-btn on" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var user = null;
+try { user = JSON.parse(localStorage.getItem('vyb_user')); } catch(e){}
+if(!user){ window.location.href = 'index.html'; }
+
+// Apply user color
+var uc = localStorage.getItem('vyb_color');
+if(uc){ document.documentElement.style.setProperty('--user-color', uc); document.documentElement.style.setProperty('--accent', uc); }
+
+function toast(msg){ var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(function(){el.classList.remove('show');},1800); }
+
+// Load user data
+document.getElementById('disp-name').textContent = user.name || 'VYBEOZA User';
+document.getElementById('disp-handle').textContent = '@'+(user.username||'vybeozauser');
+document.getElementById('topbar-handle').textContent = '@'+(user.username||'vybeozauser');
+document.getElementById('av-inner').textContent = (user.name||'V')[0].toUpperCase();
+document.getElementById('stat-vibers').textContent = user.vibers || '0';
+document.getElementById('stat-vibing').textContent = user.vibing || '0';
+
+// Privacy
+var isPrivate = localStorage.getItem('vyb_private') === 'true';
+function updatePrivBadge(){
+  var b = document.getElementById('priv-badge');
+  b.textContent = isPrivate ? '🔒 Private' : '🌐 Public';
+  b.className = 'priv-badge ' + (isPrivate ? 'priv' : 'pub');
+}
+updatePrivBadge();
+function togglePrivacy(){
+  isPrivate = !isPrivate;
+  localStorage.setItem('vyb_private', isPrivate);
+  updatePrivBadge();
+  toast('Account is now '+(isPrivate?'Private 🔒':'Public 🌐'));
+}
+
+// Dots menu
+function toggleDots(){ document.getElementById('dots-dd').classList.toggle('open'); }
+function closeDots(){ document.getElementById('dots-dd').classList.remove('open'); }
+document.addEventListener('click',function(e){ if(!e.target.closest('.dots-wrap')&&!e.target.closest('.topbar .ico-btn')) closeDots(); });
+function goSettings(){ window.location.href='settings.html'; closeDots(); }
+function doLogout(){ if(confirm('Log out?')){ localStorage.removeItem('vyb_user'); window.location.href='index.html'; } }
+function editProfile(){
+  var name = prompt('Display name:', user.name||'');
+  if(name){ user.name=name; localStorage.setItem('vyb_user',JSON.stringify(user)); document.getElementById('disp-name').textContent=name; document.getElementById('av-inner').textContent=name[0].toUpperCase(); toast('Profile updated!'); }
+}
+
+// Tabs
+var GRADS=['linear-gradient(135deg,#ff2d78,#a259ff)','linear-gradient(135deg,#00f0c8,#a259ff)','linear-gradient(135deg,#ff2d78,#00f0c8)','linear-gradient(45deg,#a259ff,#ff2d78)','linear-gradient(90deg,#00f0c8,#ff2d78)'];
+var TITLES=['That feeling when the vibe hits just right ✨','Best moments with the crew 🔥','New day new VISO 🎯','Real talk: life is a vibe 💫','Creating something special 🎪'];
+
+function showTab(name){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.btab').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('tp-'+name).classList.add('on');
+  document.getElementById('bt-'+name).classList.add('on');
+}
+
+function buildGrids(){
+  // VISOs
+  var gv=document.getElementById('grid-visos'); gv.innerHTML='';
+  for(var i=0;i<15;i++){
+    var cell=document.createElement('div'); cell.className='gcell';
+    var bg=document.createElement('div'); bg.className='gcell-bg'; bg.style.background=GRADS[i%GRADS.length];
+    var num=document.createElement('div'); num.className='gcell-num'; num.textContent='VISO '+(i+1);
+    cell.appendChild(bg); cell.appendChild(num);
+    (function(ii){cell.onclick=function(){localStorage.setItem('vyb_cur',ii);window.location.href='watch.html';};})(i);
+    gv.appendChild(cell);
+  }
+  document.getElementById('stat-visos').textContent='15';
+  // Flow
+  var gf=document.getElementById('grid-flow'); gf.innerHTML='';
+  for(var i=0;i<9;i++){
+    var cell=document.createElement('div'); cell.className='gcell';
+    var bg=document.createElement('div'); bg.className='gcell-bg'; bg.style.background=GRADS[i%GRADS.length];
+    var num=document.createElement('div'); num.className='gcell-num'; num.textContent='Flow '+(i+1);
+    cell.appendChild(bg); cell.appendChild(num);
+    cell.onclick=function(){window.location.href='flow.html';};
+    gf.appendChild(cell);
+  }
+  // Saved
+  var gs=document.getElementById('grid-saved'); gs.innerHTML='';
+  for(var i=0;i<6;i++){
+    var cell=document.createElement('div'); cell.className='gcell';
+    var bg=document.createElement('div'); bg.className='gcell-bg'; bg.style.background=GRADS[(i+2)%GRADS.length];
+    var num=document.createElement('div'); num.className='gcell-num'; num.textContent='Saved '+(i+1);
+    cell.appendChild(bg); cell.appendChild(num);
+    (function(ii){cell.onclick=function(){localStorage.setItem('vyb_cur',ii);window.location.href='watch.html';};})(i);
+    gs.appendChild(cell);
+  }
+  // History
+  var hl=document.getElementById('history-list'); hl.innerHTML='';
+  var histItems=['Krishna — Sunrise Session','Riya — Digital Art Flow','Suryansh — Gaming Highlight','Dev — Startup Vlog','Meera — Aesthetic Morning'];
+  var times=['Today','Yesterday','2 days ago','3 days ago','Last week'];
+  var emojis=['🎸','🎨','🎮','🚀','🌸'];
+  histItems.forEach(function(h,i){
+    var item=document.createElement('div'); item.className='h-item';
+    item.innerHTML='<div class="h-thumb" style="background:'+GRADS[i%GRADS.length]+'">'+emojis[i]+'</div>'
+      +'<div><div class="h-title">'+h+'</div><div class="h-meta">'+times[i]+'</div></div>';
+    (function(ii){item.onclick=function(){localStorage.setItem('vyb_cur',ii);window.location.href='watch.html';};})(i);
+    hl.appendChild(item);
+  });
+}
+
+// Handle hash navigation
+if(window.location.hash==='#history') showTab('history');
+else if(window.location.hash==='#saved') showTab('saved');
+
+buildGrids();
+</script>
+</body>
+</html>
