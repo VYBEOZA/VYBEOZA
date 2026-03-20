@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYBEOZA - Flash</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#fff;font-family:'Segoe UI',sans-serif}
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#0f0f0f;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;border-bottom:1px solid #1a1a1a}
+.topbar .logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.topbar .logo img{width:32px;height:32px;object-fit:contain}
+.topbar .logo span{font-size:18px;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.icon-btn{width:36px;height:36px;border:none;background:none;color:#fff;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;transition:background 0.2s}
+.icon-btn:hover{background:#1a1a1a}
+.avatar-btn{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4d96ff,#6bcb77);border:none;cursor:pointer;font-size:13px;font-weight:700;color:#fff}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:56px;left:0;bottom:56px;width:240px;background:#0f0f0f;overflow-y:auto;z-index:90;padding:8px 0}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+.sidebar-item{display:flex;align-items:center;gap:16px;padding:10px 24px;cursor:pointer;border-radius:10px;margin:0 8px;transition:background 0.2s;text-decoration:none;color:#fff;font-size:14px}
+.sidebar-item:hover{background:#1a1a1a}
+.sidebar-item.active{background:#1a1a1a;font-weight:600}
+.sidebar-item .icon{font-size:20px;width:24px;text-align:center}
+.sidebar-section{padding:8px 24px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-top:8px}
+
+/* MAIN CONTENT */
+.main{margin-left:240px;margin-top:56px;margin-bottom:0;padding:16px}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+
+/* PREFO BAR */
+.prefo-bar{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;margin-bottom:16px;scrollbar-width:none}
+.prefo-bar::-webkit-scrollbar{display:none}
+.prefo-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.prefo-ring{width:60px;height:60px;border-radius:12px;padding:2px;background:linear-gradient(135deg,#ff6b6b,#ffd93d,#4d96ff);position:relative}
+.prefo-ring.add-new{background:#1a1a1a;border:2px dashed #333}
+.prefo-img{width:100%;height:100%;border-radius:10px;object-fit:cover;background:#222;display:flex;align-items:center;justify-content:center;font-size:22px}
+.prefo-name{font-size:10px;color:#aaa;max-width:64px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prefo-add-icon{position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;background:#4d96ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+
+/* CATEGORY CHIPS */
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 16px;background:#1a1a1a;border:1px solid #333;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0}
+.chip.active,.chip:hover{background:#fff;color:#000;border-color:#fff}
+
+/* VIDEO GRID */
+.video-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1200px){.video-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.video-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.video-grid{grid-template-columns:1fr}}
+
+.video-card{cursor:pointer;border-radius:12px;overflow:hidden;background:#1a1a1a;transition:transform 0.2s}
+.video-card:hover{transform:translateY(-2px)}
+.thumb-wrap{position:relative;aspect-ratio:16/9;background:#222;overflow:hidden}
+.thumb-wrap img,.thumb-emoji{width:100%;height:100%;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:48px}
+.duration{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.85);color:#fff;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600}
+.live-badge{position:absolute;bottom:6px;left:6px;background:#ff0000;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}
+.ad-badge{position:absolute;top:6px;left:6px;background:#ffd93d;color:#000;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700}
+.card-info{padding:10px}
+.card-meta{display:flex;gap:8px;align-items:flex-start}
+.ch-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#4d96ff);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.card-title{font-size:13px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-sub{font-size:11px;color:#888;margin-top:4px}
+.card-dots{margin-left:auto;background:none;border:none;color:#888;cursor:pointer;font-size:18px;padding:0 4px;flex-shrink:0}
+
+/* 3-DOT MENU */
+.ctx-menu{position:fixed;background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:6px 0;z-index:999;min-width:200px;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+.ctx-menu.show{display:block}
+.ctx-item{padding:10px 16px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;transition:background 0.15s}
+.ctx-item:hover{background:#2a2a2a}
+
+/* BOTTOM NAV - mobile */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#0f0f0f;border-top:1px solid #1a1a1a;z-index:100}
+.bottom-nav-inner{display:flex;height:100%}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;text-decoration:none;color:#888;font-size:9px;transition:color 0.2s}
+.bnav-item.active,.bnav-item:hover{color:#fff}
+.bnav-icon{font-size:22px}
+.bnav-post{width:44px;height:44px;background:linear-gradient(135deg,#4d96ff,#6bcb77);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-top:-8px;box-shadow:0 4px 12px rgba(77,150,255,0.4)}
+@media(max-width:900px){.bottom-nav{display:block}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo" href="flash.html">
+    <img src="logo.png" alt="V" onerror="this.style.display='none'">
+    <span>VYBEOZA</span>
+  </a>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="location.href='explore.html'" title="Search">🔎</button>
+    <button class="icon-btn" onclick="location.href='pop.html'" title="Notifications">🔔</button>
+    <button class="avatar-btn" id="top-avatar" onclick="location.href='base.html'">V</button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <a class="sidebar-item active" href="flash.html"><span class="icon">🏠</span>Flash</a>
+  <a class="sidebar-item" href="flow.html"><span class="icon">📽️</span>Flow</a>
+  <a class="sidebar-item" href="explore.html"><span class="icon">🔎</span>Explore</a>
+  <a class="sidebar-item" href="hypo.html"><span class="icon">💬</span>Hypo</a>
+  <div class="sidebar-section">You</div>
+  <a class="sidebar-item" href="base.html"><span class="icon">👤</span>Your Base</a>
+  <a class="sidebar-item" href="history.html"><span class="icon">🕐</span>History</a>
+  <a class="sidebar-item" href="saved.html"><span class="icon">🔖</span>Saved</a>
+  <div class="sidebar-section">Vibing</div>
+  <a class="sidebar-item" href="#"><span class="icon">🎵</span>TechVyber</a>
+  <a class="sidebar-item" href="#"><span class="icon">🎮</span>GameVybe</a>
+  <a class="sidebar-item" href="#"><span class="icon">🎨</span>ArtVibe</a>
+  <div class="sidebar-section">More</div>
+  <a class="sidebar-item" href="settings.html"><span class="icon">⚙️</span>Settings</a>
+  <a class="sidebar-item" href="creator.html"><span class="icon">🎬</span>Creator Center</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- PREFO BAR -->
+  <div class="prefo-bar" id="prefo-bar">
+    <div class="prefo-item" onclick="openPrefo('new')">
+      <div class="prefo-ring add-new" style="display:flex;align-items:center;justify-content:center">
+        <div class="prefo-img" style="background:none;font-size:28px">➕</div>
+      </div>
+      <span class="prefo-name">Add Prefo</span>
+    </div>
+  </div>
+
+  <!-- CHIPS -->
+  <div class="chips" id="chips">
+    <div class="chip active" onclick="filterChip(this,'all')">All</div>
+    <div class="chip" onclick="filterChip(this,'tech')">Tech</div>
+    <div class="chip" onclick="filterChip(this,'gaming')">Gaming</div>
+    <div class="chip" onclick="filterChip(this,'music')">Music</div>
+    <div class="chip" onclick="filterChip(this,'art')">Art & Design</div>
+    <div class="chip" onclick="filterChip(this,'comedy')">Comedy</div>
+    <div class="chip" onclick="filterChip(this,'news')">News</div>
+    <div class="chip" onclick="filterChip(this,'sports')">Sports</div>
+    <div class="chip" onclick="filterChip(this,'food')">Food</div>
+    <div class="chip" onclick="filterChip(this,'travel')">Travel</div>
+  </div>
+
+  <!-- VIDEO GRID -->
+  <div class="video-grid" id="video-grid"></div>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a class="bnav-item active" href="flash.html"><span class="bnav-icon">🏠</span>Flash</a>
+    <a class="bnav-item" href="flow.html"><span class="bnav-icon">📽️</span>Flow</a>
+    <a class="bnav-item" href="post.html"><div class="bnav-post">➕</div></a>
+    <a class="bnav-item" href="hypo.html"><span class="bnav-icon">💬</span>Hypo</a>
+    <a class="bnav-item" href="base.html"><span class="bnav-icon">👤</span>Base</a>
+  </div>
+</div>
+
+<!-- CTX MENU -->
+<div class="ctx-menu" id="ctx-menu">
+  <div class="ctx-item" onclick="ctxAction('save')">🔖 Save Video</div>
+  <div class="ctx-item" onclick="ctxAction('notinterested')">🚫 Not Interested</div>
+  <div class="ctx-item" onclick="ctxAction('report')">⚠️ Report</div>
+  <div class="ctx-item" onclick="ctxAction('share')">📤 Share</div>
+  <div class="ctx-item" onclick="ctxAction('download')">⬇️ Download</div>
+  <div class="ctx-item" onclick="closeCtx()">✕ Cancel</div>
+</div>
+
+<script>
+// Auth check
+var user = JSON.parse(localStorage.getItem('vybeoza_user') || 'null');
+if(!user){ window.location.href = 'index.html'; }
+else {
+  var av = document.getElementById('top-avatar');
+  if(av) av.textContent = (user.name || 'V')[0].toUpperCase();
+}
+
+var videos = [
+  {id:1,title:'Building a Social Media App from Scratch',channel:'TechVyber',views:'124K views',time:'2 days ago',duration:'18:42',emoji:'💻',topic:'tech'},
+  {id:2,title:'Top 10 Gaming Moments of the Week',channel:'GameVybe',views:'89K views',time:'5 hours ago',duration:'12:05',emoji:'🎮',topic:'gaming'},
+  {id:3,title:'Lofi Beats to Chill and Code',channel:'VibeMusic',views:'320K views',time:'1 week ago',duration:'1:02:33',emoji:'🎵',topic:'music'},
+  {id:4,title:'Street Food Tour: Varanasi',channel:'FoodieVybe',views:'45K views',time:'3 days ago',duration:'22:15',emoji:'🍜',topic:'food'},
+  {id:5,title:'Digital Art Speedpaint Process',channel:'ArtVibe',views:'18K views',time:'6 hours ago',duration:'8:30',emoji:'🎨',topic:'art'},
+  {id:6,title:'Stand-up Comedy Special Highlights',channel:'LaughVybe',views:'200K views',time:'1 day ago',duration:'35:10',emoji:'😂',topic:'comedy'},
+  {id:7,title:'Breaking Tech News This Week',channel:'NewsVybe',views:'67K views',time:'4 hours ago',duration:'15:22',emoji:'📰',topic:'news'},
+  {id:8,title:'Travel Vlog: Exploring Old City',channel:'WanderVybe',views:'33K views',time:'2 weeks ago',duration:'28:44',emoji:'✈️',topic:'travel'},
+  {id:9,title:'Advanced JavaScript Concepts Explained',channel:'TechVyber',views:'55K views',time:'3 days ago',duration:'44:12',emoji:'⚡',topic:'tech'},
+  {id:10,title:'Epic Sports Compilation',channel:'SportVybe',views:'410K views',time:'8 hours ago',duration:'9:55',emoji:'⚽',topic:'sports'},
+  {id:11,title:'Morning Cooking Routine',channel:'FoodieVybe',views:'22K views',time:'1 day ago',duration:'14:08',emoji:'🍳',topic:'food'},
+  {id:12,title:'Anime Drawing Tutorial',channel:'ArtVibe',views:'29K views',time:'5 days ago',duration:'19:45',emoji:'✏️',topic:'art'},
+];
+// Ad at position 3
+var allItems = [];
+videos.forEach(function(v,i){
+  allItems.push({type:'video',data:v});
+  if(i===2) allItems.push({type:'ad',data:{title:'VYBEOZA Premium — Get Ad-Free Experience',channel:'VYBEOZA Official',views:'Sponsored',duration:'0:30',emoji:'⭐',topic:'ad'}});
+});
+
+function renderGrid(filter){
+  var grid = document.getElementById('video-grid');
+  grid.innerHTML = '';
+  allItems.forEach(function(item){
+    if(filter && filter!=='all' && item.type==='video' && item.data.topic!==filter) return;
+    var d = item.data;
+    var el = document.createElement('div');
+    el.className = 'video-card';
+    el.innerHTML = '<div class="thumb-wrap" onclick="playVideo('+JSON.stringify(d)+')">'
+      +'<div class="thumb-emoji" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;background:#1e1e1e">'+d.emoji+'</div>'
+      +'<span class="duration">'+d.duration+'</span>'
+      +(item.type==='ad'?'<span class="ad-badge">AD</span>':'')
+      +'</div>'
+      +'<div class="card-info"><div class="card-meta">'
+      +'<div class="ch-avatar">'+(d.channel[0]||'V')+'</div>'
+      +'<div style="flex:1"><div class="card-title">'+d.title+'</div><div class="card-sub">'+d.channel+' • '+d.views+' • '+d.time+'</div></div>'
+      +'<button class="card-dots" onclick="openCtx(event,'+d.id+')">⋮</button>'
+      +'</div></div>';
+    grid.appendChild(el);
+  });
+  // Prefo
+  renderPrefos();
+}
+
+function renderPrefos(){
+  var bar = document.getElementById('prefo-bar');
+  var add = bar.firstElementChild;
+  bar.innerHTML = '';
+  bar.appendChild(add);
+  var names = ['Krishna','Suryansh','Arnav','Priya','Rahul','Nisha'];
+  var emojis = ['🎨','🎮','📸','🎵','✈️','🍜'];
+  names.forEach(function(n,i){
+    var item = document.createElement('div');
+    item.className = 'prefo-item';
+    item.onclick = function(){ openPrefo(n); };
+    item.innerHTML = '<div class="prefo-ring"><div class="prefo-img" style="background:#1e1e1e;display:flex;align-items:center;justify-content:center">'+emojis[i]+'</div></div><span class="prefo-name">'+n+'</span>';
+    bar.appendChild(item);
+  });
+}
+
+function filterChip(el, filter){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  renderGrid(filter);
+}
+
+function playVideo(data){
+  localStorage.setItem('vybeoza_watch', JSON.stringify(data));
+  window.location.href = 'watch.html';
+}
+
+var ctxTarget = null;
+function openCtx(e, id){
+  e.stopPropagation();
+  ctxTarget = id;
+  var menu = document.getElementById('ctx-menu');
+  menu.classList.add('show');
+  menu.style.top = Math.min(e.clientY, window.innerHeight-200)+'px';
+  menu.style.left = Math.min(e.clientX, window.innerWidth-210)+'px';
+}
+function closeCtx(){ document.getElementById('ctx-menu').classList.remove('show'); }
+function ctxAction(a){ alert(a+' video #'+ctxTarget); closeCtx(); }
+document.addEventListener('click', function(e){ if(!e.target.closest('.ctx-menu')) closeCtx(); });
+
+function openPrefo(n){
+  if(n==='new') location.href='prefo.html';
+  else location.href='prefoview.html?user='+n;
+}
+
+renderGrid('all');
+</script>
+</body>
+</html>
