@@ -230,21 +230,101 @@ function toggleComments(){
   toast(commentsOff?'Comments disabled':'Comments enabled');
 }
 
-function submitPost(){
-  var title=document.getElementById('post-title').value.trim();
-  var topic=document.getElementById('post-topic').value;
-  var titleErr=document.getElementById('title-err');
-  var topicErr=document.getElementById('topic-err');
+// CLOUDINARY + SUPABASE CONFIG
+var CL_CLOUD = 'dnhsfd80r';
+var CL_PRESET = 'vybeoza_uploads';
+var SB_URL = 'https://vhwodzssytkcbicrtunn.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M';
+
+async function uploadToCloudinary(file){
+  var fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CL_PRESET);
+  fd.append('folder', 'vybeoza/posts');
+  var r = await fetch('https://api.cloudinary.com/v1_1/'+CL_CLOUD+'/auto/upload', {method:'POST', body:fd});
+  var data = await r.json();
+  return data.secure_url;
+}
+
+async function savePostToSupabase(postData){
+  var tok = user.sb_token || SB_KEY;
+  var r = await fetch(SB_URL+'/rest/v1/posts', {
+    method:'POST',
+    headers:{
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer '+tok,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(postData)
+  });
+  return r.json();
+}
+
+async function submitPost(){
+  var title = document.getElementById('post-title').value.trim();
+  var titleErr = document.getElementById('title-err');
   titleErr.classList.remove('show');
-  topicErr.classList.remove('show');
-  var ok=true;
-  if(!title){ titleErr.classList.add('show'); document.getElementById('post-title').classList.add('err'); ok=false; }
-  else { document.getElementById('post-title').classList.remove('err'); }
-  if(!topic){ topicErr.classList.add('show'); document.getElementById('post-topic').classList.add('err'); ok=false; }
-  else { document.getElementById('post-topic').classList.remove('err'); }
-  if(!ok) return;
-  toast('Posted successfully! 🔥');
-  setTimeout(function(){ window.location.href='flash.html'; },1200);
+
+  if(!title){
+    titleErr.classList.add('show');
+    document.getElementById('post-title').classList.add('err');
+    document.getElementById('post-title').focus();
+    return;
+  }
+  document.getElementById('post-title').classList.remove('err');
+
+  if(selType === 'live'){ toast('Live streaming coming soon! 🔴'); return; }
+
+  var file = document.getElementById('file-inp').files[0];
+  var caption = document.getElementById('post-caption').value.trim();
+  var submitBtn = document.querySelector('.submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading... ⏳';
+
+  try {
+    var mediaUrl = '';
+    var mediaType = selType;
+
+    // Upload file to Cloudinary if selected
+    if(file){
+      toast('Uploading media... ⏳');
+      mediaUrl = await uploadToCloudinary(file);
+    }
+
+    // Save post to Supabase
+    var postData = {
+      user_id: user.sb_uid || null,
+      title: title,
+      caption: caption,
+      media_url: mediaUrl,
+      media_type: mediaType,
+      likes: 0,
+      views: 0
+    };
+
+    if(user.sb_uid){
+      await savePostToSupabase(postData);
+    }
+
+    // Also save to localStorage for offline
+    var localPosts = JSON.parse(localStorage.getItem('vyb_posts')||'[]');
+    localPosts.unshift(Object.assign({}, postData, {
+      username: user.username,
+      name: user.name,
+      avatar: user.avatar||'',
+      id: Date.now()
+    }));
+    localStorage.setItem('vyb_posts', JSON.stringify(localPosts.slice(0,50)));
+
+    toast('Posted! 🔥');
+    setTimeout(function(){ window.location.href='flash.html'; }, 1000);
+
+  } catch(e){
+    toast('Error uploading. Try again!');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Post to VYBEOZA →';
+  }
 }
 </script>
 </body>
