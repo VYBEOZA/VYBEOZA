@@ -54,10 +54,10 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
   <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
   <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
   <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
-  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+  <a class="bn-btn" href="creator.html"><span class="bn-ico">🎬</span><span class="bn-lbl">Center</span></a>
 </div>
 <script>
-var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html';
+var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html'; var uc=localStorage.getItem('vyb_color'); if(uc){document.documentElement.style.setProperty('--accent',uc);document.documentElement.style.setProperty('--user-color',uc);}
 var todayNotifs=[
   {cls:'ni-like',ico:'❤️',name:'Krishna',text:'liked your video <b>My VYBEOZA Journey</b>',time:'2 minutes ago',thumb:'🎬',unread:true},
   {cls:'ni-comment',ico:'💬',name:'Suryansh',text:'commented: <b>"This is fire! 🔥"</b> on your video',time:'15 minutes ago',thumb:'💬',unread:true},
