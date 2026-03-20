@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYBEOZA - Base</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#0f0f0f;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;border-bottom:1px solid #1a1a1a}
+.back-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.topbar h2{font-size:18px;font-weight:700;flex:1}
+.topbar-right{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;border:none;background:none;color:#fff;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.icon-btn:hover{background:#1a1a1a}
+
+.content{margin-top:56px;padding-bottom:80px}
+
+/* DESKTOP LAYOUT */
+.profile-layout{display:flex;gap:32px;padding:24px;max-width:1000px;margin:0 auto}
+.profile-left{width:260px;flex-shrink:0}
+.profile-right{flex:1;min-width:0}
+@media(max-width:700px){
+  .profile-layout{flex-direction:column;padding:16px}
+  .profile-left{width:100%}
+}
+
+/* AVATAR */
+.avatar-wrap{position:relative;width:100px;height:100px;margin:0 auto 16px}
+.big-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#4d96ff);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;border:3px solid #333}
+.privacy-badge{position:absolute;bottom:0;right:0;background:#1a1a1a;border:2px solid #0f0f0f;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+
+.display-name{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
+.username{font-size:13px;color:#888;text-align:center;margin-bottom:12px}
+.bio{font-size:13px;color:#ccc;text-align:center;line-height:1.5;margin-bottom:16px}
+.location{font-size:12px;color:#888;text-align:center;margin-bottom:16px}
+
+.stats-row{display:flex;justify-content:space-around;margin-bottom:20px}
+.stat-item{text-align:center;cursor:pointer}
+.stat-num{font-size:18px;font-weight:800;display:block}
+.stat-label{font-size:11px;color:#888}
+
+.btn-edit{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:600;margin-bottom:8px;transition:background 0.2s}
+.btn-edit:hover{background:#2a2a2a}
+.btn-creator{width:100%;padding:10px;background:linear-gradient(135deg,#4d96ff,#6bcb77);border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:13px;font-weight:700;margin-bottom:16px;transition:opacity 0.2s}
+.btn-creator:hover{opacity:0.85}
+
+/* TABS */
+.profile-tabs{display:flex;border-bottom:1px solid #1a1a1a;margin-bottom:16px}
+.ptab{flex:1;padding:12px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:#888;border-bottom:2px solid transparent;transition:all 0.2s}
+.ptab.active{color:#fff;border-bottom-color:#fff}
+
+/* GRID */
+.post-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.post-cell{aspect-ratio:1;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;transition:opacity 0.2s;position:relative;overflow:hidden}
+.post-cell:hover{opacity:0.8}
+.post-cell .views{position:absolute;bottom:6px;left:6px;font-size:11px;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:4px;display:none}
+.post-cell:hover .views{display:block}
+
+/* 3 DOT SETTINGS MENU */
+.dot-menu{position:fixed;top:0;right:0;bottom:0;width:280px;background:#1a1a1a;z-index:500;transform:translateX(100%);transition:transform 0.3s;overflow-y:auto}
+.dot-menu.show{transform:translateX(0)}
+.dot-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:499;display:none}
+.dot-menu-overlay.show{display:block}
+.dot-menu-header{padding:20px 16px 12px;font-size:16px;font-weight:700;border-bottom:1px solid #333}
+.dot-item{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;font-size:14px;transition:background 0.15s}
+.dot-item:hover{background:#2a2a2a}
+.dot-item-icon{font-size:20px;width:24px;text-align:center}
+.dot-section{padding:8px 16px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.dot-item.danger{color:#ff6b6b}
+
+/* BOTTOM NAV mobile */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#0f0f0f;border-top:1px solid #1a1a1a;z-index:100}
+.bottom-nav-inner{display:flex;height:100%}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;text-decoration:none;color:#888;font-size:9px}
+.bnav-item.active,.bnav-item:hover{color:#fff}
+.bnav-icon{font-size:22px}
+.bnav-post{width:44px;height:44px;background:linear-gradient(135deg,#4d96ff,#6bcb77);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin-top:-8px}
+@media(max-width:900px){.bottom-nav{display:block}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2 id="page-username">@username</h2>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="openDotMenu()" title="Settings">⋮</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="profile-layout">
+    <!-- LEFT: Profile Info -->
+    <div class="profile-left">
+      <div class="avatar-wrap">
+        <div class="big-avatar" id="profile-avatar">V</div>
+        <div class="privacy-badge" id="privacy-badge" onclick="openDotMenu()">🔓</div>
+      </div>
+      <div class="display-name" id="display-name">VYBEOZA User</div>
+      <div class="username" id="display-username">@vybeozauser</div>
+      <div class="bio" id="display-bio">Living the VYBEOZA life 🔥<br>Content Creator | Varanasi</div>
+      <div class="location">📍 Varanasi, India</div>
+      <div class="stats-row">
+        <div class="stat-item" onclick="showTab('posts')"><span class="stat-num" id="stat-posts">0</span><span class="stat-label">VISOs</span></div>
+        <div class="stat-item" onclick="alert('Vibers list')"><span class="stat-num" id="stat-vibers">0</span><span class="stat-label">Vibers</span></div>
+        <div class="stat-item" onclick="alert('Vibing list')"><span class="stat-num" id="stat-vibing">0</span><span class="stat-label">Vibing</span></div>
+      </div>
+      <button class="btn-edit" onclick="editProfile()">Edit Profile</button>
+      <button class="btn-creator" onclick="location.href='creator.html'">🎬 Creator Center</button>
+    </div>
+
+    <!-- RIGHT: Posts grid -->
+    <div class="profile-right">
+      <div class="profile-tabs">
+        <div class="ptab active" id="tab-posts" onclick="showTab('posts')">📹 VISOs</div>
+        <div class="ptab" id="tab-flow" onclick="showTab('flow')">📽️ Flow</div>
+        <div class="ptab" id="tab-saved" onclick="showTab('saved')">🔖 Saved</div>
+      </div>
+      <div class="post-grid" id="post-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3-DOT SLIDE MENU -->
+<div class="dot-menu-overlay" id="dot-overlay" onclick="closeDotMenu()"></div>
+<div class="dot-menu" id="dot-menu">
+  <div class="dot-menu-header">Settings & More</div>
+  <div class="dot-section">Account</div>
+  <div class="dot-item" onclick="togglePrivacy()"><span class="dot-item-icon" id="privacy-icon">🔓</span> <span id="privacy-text">Account is Public</span></div>
+  <div class="dot-item" onclick="location.href='settings.html'"><span class="dot-item-icon">⚙️</span> Settings & Privacy</div>
+  <div class="dot-item" onclick="editProfile()"><span class="dot-item-icon">✏️</span> Edit Profile</div>
+  <div class="dot-item" onclick="location.href='creator.html'"><span class="dot-item-icon">🎬</span> Creator Center</div>
+  <div class="dot-section">Activity</div>
+  <div class="dot-item" onclick="location.href='history.html'"><span class="dot-item-icon">🕐</span> Watch History</div>
+  <div class="dot-item" onclick="showTab('saved');closeDotMenu()"><span class="dot-item-icon">🔖</span> Saved Videos</div>
+  <div class="dot-item" onclick="alert('Archive')"><span class="dot-item-icon">📦</span> Archive</div>
+  <div class="dot-item" onclick="alert('QR Code')"><span class="dot-item-icon">📱</span> QR Code</div>
+  <div class="dot-section">More</div>
+  <div class="dot-item" onclick="location.href='settings.html#about'"><span class="dot-item-icon">ℹ️</span> About VYBEOZA</div>
+  <div class="dot-item danger" onclick="doLogout()"><span class="dot-item-icon">🚪</span> Log Out</div>
+</div>
+
+<!-- BOTTOM NAV mobile -->
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a class="bnav-item" href="flash.html"><span class="bnav-icon">🏠</span>Flash</a>
+    <a class="bnav-item" href="flow.html"><span class="bnav-icon">📽️</span>Flow</a>
+    <a class="bnav-item" href="post.html"><div class="bnav-post">➕</div></a>
+    <a class="bnav-item" href="hypo.html"><span class="bnav-icon">💬</span>Hypo</a>
+    <a class="bnav-item active" href="base.html"><span class="bnav-icon">👤</span>Base</a>
+  </div>
+</div>
+
+<script>
+var user = JSON.parse(localStorage.getItem('vybeoza_user')||'null');
+if(!user){ location.href='index.html'; }
+
+var isPrivate = localStorage.getItem('vybeoza_private')==='true';
+
+document.getElementById('page-username').textContent = '@'+(user.username||'user');
+document.getElementById('display-name').textContent = user.name||'VYBEOZA User';
+document.getElementById('display-username').textContent = '@'+(user.username||'vybeozauser');
+document.getElementById('profile-avatar').textContent = (user.name||'V')[0].toUpperCase();
+document.getElementById('stat-vibers').textContent = user.vibers||'0';
+document.getElementById('stat-vibing').textContent = user.vibing||'0';
+
+updatePrivacyUI();
+
+var postsData = [
+  {emoji:'💻',views:'1.2K'},{emoji:'🎮',views:'890'},{emoji:'🎵',views:'2.4K'},
+  {emoji:'🎨',views:'540'},{emoji:'✈️',views:'1.8K'},{emoji:'🍜',views:'670'},
+];
+var flowData = [{emoji:'📽️',views:'3.4K'},{emoji:'🔥',views:'1.1K'},{emoji:'💫',views:'890'}];
+var savedData = [{emoji:'⭐',views:''},{emoji:'🔖',views:''},{emoji:'💾',views:''}];
+var activeTab = 'posts';
+
+function showTab(tab){
+  activeTab = tab;
+  document.querySelectorAll('.ptab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('tab-'+tab).classList.add('active');
+  var data = tab==='posts' ? postsData : tab==='flow' ? flowData : savedData;
+  document.getElementById('stat-posts').textContent = tab==='posts' ? postsData.length : '';
+  renderGrid(data);
+}
+
+function renderGrid(data){
+  var grid = document.getElementById('post-grid');
+  grid.innerHTML = '';
+  if(data.length===0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#555">No content yet</div>';
+    return;
+  }
+  data.forEach(function(p){
+    var el = document.createElement('div');
+    el.className = 'post-cell';
+    el.innerHTML = p.emoji + (p.views?'<span class="views">▶ '+p.views+'</span>':'');
+    grid.appendChild(el);
+  });
+}
+
+function updatePrivacyUI(){
+  document.getElementById('privacy-icon').textContent = isPrivate ? '🔒' : '🔓';
+  document.getElementById('privacy-text').textContent = isPrivate ? 'Account is Private' : 'Account is Public';
+  document.getElementById('privacy-badge').textContent = isPrivate ? '🔒' : '🔓';
+}
+
+function togglePrivacy(){
+  isPrivate = !isPrivate;
+  localStorage.setItem('vybeoza_private', isPrivate);
+  updatePrivacyUI();
+  alert('Account is now '+(isPrivate?'Private 🔒':'Public 🔓'));
+}
+
+function editProfile(){
+  var name = prompt('Display name:', user.name);
+  if(name){ user.name = name; localStorage.setItem('vybeoza_user', JSON.stringify(user)); document.getElementById('display-name').textContent = name; }
+}
+
+function openDotMenu(){
+  document.getElementById('dot-menu').classList.add('show');
+  document.getElementById('dot-overlay').classList.add('show');
+}
+function closeDotMenu(){
+  document.getElementById('dot-menu').classList.remove('show');
+  document.getElementById('dot-overlay').classList.remove('show');
+}
+function doLogout(){
+  if(confirm('Log out?')){ localStorage.removeItem('vybeoza_user'); location.href='index.html'; }
+}
+
+showTab('posts');
+</script>
+</body>
+</html>
