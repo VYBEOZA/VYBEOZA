@@ -183,6 +183,14 @@ button{font-family:var(--font);cursor:pointer}
 
   <!-- ACCOUNT -->
   <div class="sec-lbl">Account</div>
+  <button class="set-item" onclick="addAccount()">
+    <div class="si-left"><span class="si-ico">➕</span><div><div class="si-text">Add New Account</div><div class="si-sub">Create or log in to another account</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
+  <button class="set-item" onclick="switchAccount()">
+    <div class="si-left"><span class="si-ico">🔄</span><div><div class="si-text">Switch Account</div><div class="si-sub" id="switch-sub">Manage your accounts</div></div></div>
+    <span class="si-arrow">›</span>
+  </button>
   <button class="set-item" style="color:#ff6b6b" onclick="doLogout()">
     <div class="si-left"><span class="si-ico">🚪</span><div><div class="si-text" style="color:#ff6b6b">Log Out</div></div></div>
   </button>
@@ -213,7 +221,7 @@ button{font-family:var(--font);cursor:pointer}
   <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
   <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
   <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
-  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+  <a class="bn-btn" href="creator.html"><span class="bn-ico">🎬</span><span class="bn-lbl">Center</span></a>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -306,6 +314,34 @@ function changePw(){
 function openAbout(){ document.getElementById('about-sheet').classList.add('open'); }
 document.getElementById('about-sheet').onclick=function(e){if(e.target===this)this.classList.remove('open');};
 function doLogout(){ if(confirm('Log out?')){ localStorage.removeItem('vyb_user'); window.location.href='index.html'; } }
+
+function addAccount(){
+  if(confirm('Add a new account? You will be taken to the login page.')){
+    localStorage.removeItem('vyb_user');
+    window.location.href='index.html';
+  }
+}
+
+function switchAccount(){
+  var accounts=JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+  if(accounts.length<2){ toast('No other accounts saved. Add one first!'); return; }
+  var names=accounts.map(function(a,i){ return i+'. '+a.name+' (@'+a.username+')'; }).join('\n');
+  var choice=prompt('Switch to which account?\n\n'+names+'\n\nEnter number (0, 1, 2...):');
+  if(choice===null||choice==='') return;
+  var idx=parseInt(choice);
+  if(isNaN(idx)||!accounts[idx]){ toast('Invalid choice!'); return; }
+  if(accounts[idx].username===user.username){ toast('Already on this account!'); return; }
+  localStorage.setItem('vyb_user',JSON.stringify(accounts[idx]));
+  toast('Switched to @'+accounts[idx].username+'!');
+  setTimeout(function(){ window.location.href='flash.html'; },800);
+}
+
+// Show account count in sub label
+(function(){
+  var accounts=JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+  var sub=document.getElementById('switch-sub');
+  if(sub) sub.textContent=accounts.length+' account'+(accounts.length!==1?'s':'')+' saved';
+})();
 </script>
 </body>
 </html>
