@@ -140,6 +140,25 @@ button,input,select{font-family:var(--font);cursor:pointer}
   </div>
 </div>
 <script>
+// SUPABASE CONFIG
+var SB_URL = 'https://vhwodzssytkcbicrtunn.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M';
+
+function sbH(tok){ return {'apikey':SB_KEY,'Content-Type':'application/json','Authorization':'Bearer '+(tok||SB_KEY)}; }
+
+async function sbSignup(email,pw,name,username){
+  var r=await fetch(SB_URL+'/auth/v1/signup',{method:'POST',headers:sbH(),body:JSON.stringify({email:email,password:pw,data:{name:name,username:username}})});
+  return r.json();
+}
+async function sbLogin(email,pw){
+  var r=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:sbH(),body:JSON.stringify({email:email,password:pw})});
+  return r.json();
+}
+async function sbSaveProfile(tok,uid,data){
+  await fetch(SB_URL+'/rest/v1/profiles',{method:'POST',headers:Object.assign(sbH(tok),{'Prefer':'resolution=merge-duplicates'}),body:JSON.stringify(Object.assign({id:uid},data))});
+}
+function setLoading(on){document.querySelectorAll('.btn-main').forEach(function(b){b.disabled=on;b.style.opacity=on?'.6':'1';});}
+
 // If already logged in, go to flash
 (function(){
   try {
@@ -230,31 +249,53 @@ document.getElementById('btn-verify').onclick = function(){
   if(code === '1234'){ err.classList.remove('show'); showPanel('pan-su4'); }
   else { err.classList.add('show'); }
 };
-document.getElementById('btn-enter').onclick = function(){
+document.getElementById('btn-enter').onclick = async function(){
   var fn = document.getElementById('su-fname').value.trim();
   var ln = document.getElementById('su-lname').value.trim();
   var un = document.getElementById('su-username').value.trim().replace('@','');
   var em = document.getElementById('su-email').value.trim();
-  var userData = {name: fn+' '+ln, username: un, email: em, avatar: '', vibers: 0, vibing: 0, joined: new Date().toISOString()};
-  // Save account
-  var accounts = JSON.parse(localStorage.getItem('vyb_accounts') || '[]');
-  accounts.push(Object.assign({}, userData, {password: document.getElementById('su-pw').value}));
-  localStorage.setItem('vyb_accounts', JSON.stringify(accounts));
-  saveAndEnter(userData);
+  var pw = document.getElementById('su-pw').value;
+  setLoading(true);
+  try {
+    var res = await sbSignup(em, pw, fn+' '+ln, un);
+    if(res.error){ alert('Signup error: '+res.error.message); setLoading(false); return; }
+    var tok = res.access_token;
+    var uid = res.user && res.user.id;
+    if(uid && tok){
+      await sbSaveProfile(tok, uid, {username:un, name:fn+' '+ln, bio:'', avatar_url:'', vibers:0, vibing:0});
+    }
+    var userData = {name:fn+' '+ln, username:un, email:em, avatar:'', vibers:0, vibing:0, sb_token:tok, sb_uid:uid};
+    var accounts = JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+    accounts.push(Object.assign({},userData,{password:pw}));
+    localStorage.setItem('vyb_accounts', JSON.stringify(accounts));
+    saveAndEnter(userData);
+  } catch(e){ alert('Network error. Check connection.'); setLoading(false); }
 };
-document.getElementById('btn-do-login').onclick = function(){
-  var user = document.getElementById('li-user').value.trim();
+
+document.getElementById('btn-do-login').onclick = async function(){
+  var userVal = document.getElementById('li-user').value.trim();
   var pass = document.getElementById('li-pw').value;
   var err = document.getElementById('li-err');
-  if(!user || !pass){ err.textContent = 'Please fill all fields'; err.classList.add('show'); return; }
-  var accounts = JSON.parse(localStorage.getItem('vyb_accounts') || '[]');
-  var found = accounts.find(function(a){ return (a.username === user || a.email === user) && a.password === pass; });
-  if(found){ err.classList.remove('show'); saveAndEnter(found); }
-  else {
-    // Demo: any login works in demo mode
-    var demoUser = {name: user, username: user, email: user+'@vybeoza.com', avatar: '', vibers: 0, vibing: 0};
-    saveAndEnter(demoUser);
-  }
+  if(!userVal || !pass){ err.textContent='Please fill all fields'; err.classList.add('show'); return; }
+  // If email, try Supabase login
+  var email = userVal.includes('@') ? userVal : userVal+'@vybeoza.app';
+  setLoading(true);
+  try {
+    var res = await sbLogin(email, pass);
+    if(res.access_token){
+      var u = res.user;
+      var meta = (u && u.user_metadata) || {};
+      var userData = {name:meta.name||userVal, username:meta.username||userVal, email:u.email, avatar:'', vibers:0, vibing:0, sb_token:res.access_token, sb_uid:u.id};
+      err.classList.remove('show');
+      saveAndEnter(userData);
+      return;
+    }
+  } catch(e){}
+  // Fallback: local accounts
+  var accounts = JSON.parse(localStorage.getItem('vyb_accounts')||'[]');
+  var found = accounts.find(function(a){ return (a.username===userVal||a.email===userVal) && a.password===pass; });
+  if(found){ err.classList.remove('show'); saveAndEnter(found); setLoading(false); return; }
+  err.textContent='Invalid username or password'; err.classList.add('show'); setLoading(false);
 };
 </script>
 </body>
