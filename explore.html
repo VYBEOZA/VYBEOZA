@@ -107,12 +107,12 @@ button,input{font-family:var(--font);cursor:pointer}
   <a class="bn-btn" href="flow.html"><span class="bn-ico">📽️</span><span class="bn-lbl">Flow</span></a>
   <a class="bn-btn" href="post.html"><div class="bn-fab">＋</div></a>
   <a class="bn-btn" href="hypo.html"><span class="bn-ico">💬</span><span class="bn-lbl">Hypo</span></a>
-  <a class="bn-btn" href="base.html"><span class="bn-ico">👤</span><span class="bn-lbl">Base</span></a>
+  <a class="bn-btn" href="creator.html"><span class="bn-ico">🎬</span><span class="bn-lbl">Center</span></a>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html';
+var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html'; var uc=localStorage.getItem('vyb_color'); if(uc){document.documentElement.style.setProperty('--accent',uc);document.documentElement.style.setProperty('--user-color',uc);}
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},1800);}
 
 var USERS=[
