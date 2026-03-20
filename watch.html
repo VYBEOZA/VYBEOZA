@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VYBEOZA - Watch</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#fff;font-family:'Segoe UI',sans-serif}
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:#0f0f0f;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;border-bottom:1px solid #1a1a1a}
+.back-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px}
+.topbar .logo{font-size:18px;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcb77,#4d96ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none}
+
+.layout{display:flex;gap:24px;margin-top:56px;padding:16px;max-width:1400px;margin-left:auto;margin-right:auto}
+.watch-left{flex:1;min-width:0}
+.watch-right{width:380px;flex-shrink:0}
+@media(max-width:1100px){.watch-right{width:300px}}
+@media(max-width:800px){.layout{flex-direction:column}.watch-right{width:100%}}
+
+/* VIDEO PLAYER */
+.player-box{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9}
+.video-display{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:#111;position:relative}
+
+/* AD OVERLAY */
+.ad-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.92);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.ad-overlay.show{display:flex}
+.ad-label{background:#ffd93d;color:#000;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700}
+.ad-content{font-size:16px;font-weight:600;text-align:center;padding:0 24px}
+.ad-countdown{font-size:13px;color:#aaa}
+.skip-btn{background:#1a1a1a;border:1px solid #555;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;display:none}
+.skip-btn.visible{display:block}
+
+/* CONTROLS */
+.controls{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.85));padding:12px 12px 8px}
+.progress-wrap{position:relative;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;margin-bottom:8px;transition:height 0.15s}
+.progress-wrap:hover{height:6px}
+.progress-fill{height:100%;background:#4d96ff;border-radius:2px;pointer-events:none;transition:width 0.1s linear}
+.progress-thumb{position:absolute;top:50%;right:-6px;width:12px;height:12px;background:#4d96ff;border-radius:50%;transform:translateY(-50%);pointer-events:none;display:none}
+.progress-wrap:hover .progress-thumb{display:block}
+.ctrl-row{display:flex;align-items:center;gap:8px}
+.ctrl-btn{background:none;border:none;color:#fff;cursor:pointer;font-size:20px;padding:4px;border-radius:6px;transition:background 0.15s;display:flex;align-items:center;justify-content:center}
+.ctrl-btn:hover{background:rgba(255,255,255,0.15)}
+.time-display{font-size:12px;color:#fff;font-family:monospace;white-space:nowrap}
+.ctrl-right{margin-left:auto;display:flex;align-items:center;gap:4px;position:relative}
+
+/* SPEED MENU */
+.speed-btn{background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
+.speed-menu{position:absolute;bottom:36px;right:0;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:4px 0;min-width:100px;display:none;z-index:10}
+.speed-menu.show{display:block}
+.speed-opt{padding:8px 16px;cursor:pointer;font-size:13px;transition:background 0.15s;text-align:center}
+.speed-opt:hover{background:#2a2a2a}
+.speed-opt.active{color:#4d96ff;font-weight:700}
+
+/* CAPTION OVERLAY */
+.caption-overlay{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;font-size:16px;padding:6px 16px;border-radius:8px;display:none;text-align:center;max-width:80%;pointer-events:none}
+.caption-overlay.show{display:block}
+
+/* VIDEO INFO */
+.video-info{padding:12px 0}
+.video-title{font-size:18px;font-weight:700;line-height:1.4;margin-bottom:8px}
+.video-meta{font-size:13px;color:#888;margin-bottom:12px}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.action-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:#1a1a1a;border:none;border-radius:20px;color:#fff;cursor:pointer;font-size:13px;font-weight:600;transition:background 0.2s}
+.action-btn:hover{background:#2a2a2a}
+.action-btn.liked{background:#4d96ff;color:#fff}
+
+/* CHANNEL INFO */
+.channel-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;margin-bottom:12px}
+.ch-big-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#4d96ff);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.ch-info{flex:1}
+.ch-name{font-size:14px;font-weight:700}
+.ch-vibers{font-size:12px;color:#888}
+.vibe-btn{padding:8px 20px;background:linear-gradient(135deg,#4d96ff,#6bcb77);border:none;border-radius:20px;color:#fff;font-weight:700;cursor:pointer;font-size:13px;transition:opacity 0.2s}
+.vibe-btn:hover{opacity:0.85}
+.vibe-btn.vibing{background:#1a1a1a;border:1px solid #4d96ff;color:#4d96ff}
+
+/* DESCRIPTION */
+.desc-section{margin-bottom:12px}
+.desc-toggle{background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;padding:8px 0;width:100%}
+.desc-body{background:#1a1a1a;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;color:#ccc;display:none}
+.desc-body.show{display:block}
+
+/* COMMENTS */
+.comments-section{margin-bottom:12px}
+.comments-toggle{background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;padding:8px 0;width:100%}
+.comments-body{display:none}
+.comments-body.show{display:block}
+.comment-input-row{display:flex;gap:8px;margin-bottom:12px}
+.comment-input{flex:1;background:#1a1a1a;border:1px solid #333;border-radius:20px;padding:8px 16px;color:#fff;font-size:13px;outline:none}
+.comment-input:focus{border-color:#4d96ff}
+.comment-send{background:#4d96ff;border:none;border-radius:50%;width:36px;height:36px;color:#fff;cursor:pointer;font-size:16px;flex-shrink:0}
+.comment-item{display:flex;gap:10px;margin-bottom:12px}
+.comment-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#ffd93d);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.comment-body{flex:1}
+.comment-name{font-size:12px;font-weight:700;margin-bottom:2px}
+.comment-text{font-size:13px;color:#ccc;line-height:1.4}
+.comment-actions{display:flex;gap:12px;margin-top:4px}
+.comment-action{background:none;border:none;color:#888;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:4px}
+
+/* SUGGESTIONS */
+.suggest-title{font-size:15px;font-weight:700;margin-bottom:12px;color:#fff}
+.suggest-card{display:flex;gap:10px;margin-bottom:12px;cursor:pointer;border-radius:8px;padding:6px;transition:background 0.2s}
+.suggest-card:hover{background:#1a1a1a}
+.suggest-thumb{width:120px;height:68px;border-radius:6px;background:#1e1e1e;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative}
+.suggest-dur{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.85);font-size:10px;padding:1px 5px;border-radius:3px;color:#fff}
+.suggest-info{flex:1}
+.suggest-title2{font-size:12px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.suggest-meta{font-size:11px;color:#888;margin-top:4px}
+
+/* SHARE MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal-box{background:#1a1a1a;border-radius:20px 20px 0 0;width:100%;max-width:500px;padding:20px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
+.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.share-opt{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;border-radius:10px;transition:background 0.2s}
+.share-opt:hover{background:#2a2a2a}
+.share-icon{font-size:28px}
+.share-label{font-size:11px;color:#aaa}
+.copy-link-row{display:flex;gap:8px;background:#111;border-radius:10px;padding:10px 14px;font-size:12px;color:#888;align-items:center;margin-bottom:12px}
+.copy-link-row span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-link-btn{background:#4d96ff;border:none;border-radius:6px;color:#fff;padding:4px 12px;cursor:pointer;font-size:12px;flex-shrink:0}
+.modal-cancel{width:100%;padding:12px;background:#111;border:none;border-radius:10px;color:#fff;cursor:pointer;font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <a class="logo" href="flash.html">VYBEOZA</a>
+</div>
+
+<div class="layout">
+  <div class="watch-left">
+    <!-- PLAYER -->
+    <div class="player-box" id="player-box">
+      <div class="video-display" id="video-display">🎬</div>
+
+      <!-- AD OVERLAY -->
+      <div class="ad-overlay" id="ad-overlay">
+        <div class="ad-label">Advertisement</div>
+        <div class="ad-content">Try VYBEOZA Premium — Ad-Free Experience!</div>
+        <div class="ad-countdown" id="ad-countdown">Ad plays for <span id="ad-timer">15</span>s</div>
+        <button class="skip-btn" id="skip-btn" onclick="skipAd()">Skip Ad ▶</button>
+      </div>
+
+      <!-- CAPTION -->
+      <div class="caption-overlay" id="caption-overlay">Auto-generated captions will appear here...</div>
+
+      <!-- CONTROLS -->
+      <div class="controls" id="controls">
+        <div class="progress-wrap" id="progress-wrap">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          <div class="progress-thumb" id="progress-thumb"></div>
+        </div>
+        <div class="ctrl-row">
+          <button class="ctrl-btn" id="play-btn" onclick="togglePlay()">▶</button>
+          <button class="ctrl-btn" onclick="skipTime(-10)" title="Back 10s">⏪</button>
+          <button class="ctrl-btn" onclick="skipTime(10)" title="Forward 10s">⏩</button>
+          <span class="time-display" id="time-display">0:00 / 0:00</span>
+          <div class="ctrl-right">
+            <button class="ctrl-btn" id="caption-btn" onclick="toggleCaptions()" title="Captions">CC</button>
+            <div style="position:relative">
+              <button class="speed-btn" id="speed-btn" onclick="toggleSpeedMenu()">1x</button>
+              <div class="speed-menu" id="speed-menu">
+                <div class="speed-opt" onclick="setSpeed(0.5)">0.5x</div>
+                <div class="speed-opt active" onclick="setSpeed(1)">1x</div>
+                <div class="speed-opt" onclick="setSpeed(1.25)">1.25x</div>
+                <div class="speed-opt" onclick="setSpeed(1.5)">1.5x</div>
+                <div class="speed-opt" onclick="setSpeed(1.75)">1.75x</div>
+                <div class="speed-opt" onclick="setSpeed(2)">2x</div>
+              </div>
+            </div>
+            <button class="ctrl-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO INFO -->
+    <div class="video-info">
+      <div class="video-title" id="v-title">Video Title</div>
+      <div class="video-meta" id="v-meta">0 views • Just now</div>
+      <div class="action-row">
+        <button class="action-btn" id="like-btn" onclick="toggleLike()">❤️ Like <span id="like-count">1.2K</span></button>
+        <button class="action-btn" onclick="openShare()">📤 Share</button>
+        <button class="action-btn" id="save-btn" onclick="toggleSave()">🔖 Save</button>
+        <button class="action-btn" onclick="repost()">🔁 Repost</button>
+        <button class="action-btn" onclick="downloadVideo()">⬇️ Download</button>
+      </div>
+
+      <!-- CHANNEL -->
+      <div class="channel-row">
+        <div class="ch-big-avatar" id="ch-avatar">V</div>
+        <div class="ch-info">
+          <div class="ch-name" id="ch-name">Channel</div>
+          <div class="ch-vibers" id="ch-vibers">0 Vibers</div>
+        </div>
+        <button class="vibe-btn" id="vibe-btn" onclick="toggleVibe()">+ Vibe</button>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="desc-section">
+        <button class="desc-toggle" onclick="toggleDesc()">📄 Description <span id="desc-arrow">▼</span></button>
+        <div class="desc-body" id="desc-body">
+          <p>This is the video description. The creator can write about their video here, add links, timestamps, and more details for viewers.</p>
+          <p style="margin-top:8px;color:#888">Tags: #vybeoza #viral #trending</p>
+        </div>
+      </div>
+
+      <!-- COMMENTS -->
+      <div class="comments-section">
+        <button class="comments-toggle" onclick="toggleComments()">💬 Comments (<span id="comment-count">24</span>) <span id="comment-arrow">▼</span></button>
+        <div class="comments-body" id="comments-body">
+          <div class="comment-input-row">
+            <input class="comment-input" id="comment-input" placeholder="Add a comment...">
+            <button class="comment-send" onclick="postComment()">➤</button>
+          </div>
+          <div id="comment-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUGGESTIONS -->
+  <div class="watch-right">
+    <div class="suggest-title">Up Next</div>
+    <div id="suggest-list"></div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-bg" id="share-modal">
+  <div class="modal-box">
+    <div class="modal-title">Share Video</div>
+    <div class="share-grid">
+      <div class="share-opt" onclick="shareVia('hypo')"><span class="share-icon">💬</span><span class="share-label">Hypo</span></div>
+      <div class="share-opt" onclick="shareVia('whatsapp')"><span class="share-icon">📱</span><span class="share-label">WhatsApp</span></div>
+      <div class="share-opt" onclick="shareVia('story')"><span class="share-icon">⭕</span><span class="share-label">Prefo</span></div>
+      <div class="share-opt" onclick="shareVia('instagram')"><span class="share-icon">📷</span><span class="share-label">Instagram</span></div>
+    </div>
+    <div class="copy-link-row">
+      <span id="share-link">https://vybeoza.github.io/VYBEOZA/watch.html</span>
+      <button class="copy-link-btn" onclick="copyLink()">Copy</button>
+    </div>
+    <button class="modal-cancel" onclick="closeShare()">Cancel</button>
+  </div>
+</div>
+
+<script>
+var user = JSON.parse(localStorage.getItem('vybeoza_user')||'null');
+if(!user){ location.href='index.html'; }
+
+var vidData = JSON.parse(localStorage.getItem('vybeoza_watch')||'{}');
+document.getElementById('v-title').textContent = vidData.title || 'VYBEOZA Video';
+document.getElementById('v-meta').textContent = (vidData.views||'0 views') + ' • ' + (vidData.time||'Just now');
+document.getElementById('ch-name').textContent = vidData.channel || 'Channel';
+document.getElementById('ch-vibers').textContent = Math.floor(Math.random()*100)+'K Vibers';
+document.getElementById('ch-avatar').textContent = (vidData.channel||'V')[0];
+document.getElementById('video-display').textContent = vidData.emoji || '🎬';
+
+// FAKE PLAYER STATE
+var isPlaying = false;
+var currentTime = 0;
+var duration = 720; // 12 min fake
+var speed = 1;
+var captionsOn = false;
+var vibing = false;
+var liked = false;
+var saved = false;
+var adShown = false;
+var playerInterval = null;
+
+function fmt(s){
+  s = Math.floor(s);
+  var m = Math.floor(s/60), sec = s%60;
+  return m+':'+(sec<10?'0':'')+sec;
+}
+
+function updateProgress(){
+  var pct = (currentTime/duration)*100;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-thumb').style.left = pct+'%';
+  document.getElementById('time-display').textContent = fmt(currentTime)+' / '+fmt(duration);
+  // Ad every 5 min = 300s
+  if(!adShown && currentTime > 5 && currentTime < 8){
+    showAd();
+  }
+}
+
+function togglePlay(){
+  isPlaying = !isPlaying;
+  document.getElementById('play-btn').textContent = isPlaying ? '⏸' : '▶';
+  if(isPlaying){
+    playerInterval = setInterval(function(){
+      currentTime = Math.min(currentTime + speed, duration);
+      updateProgress();
+      if(currentTime >= duration){ isPlaying=false; clearInterval(playerInterval); document.getElementById('play-btn').textContent='▶'; }
+    }, 1000);
+  } else {
+    clearInterval(playerInterval);
+  }
+}
+
+function skipTime(sec){
+  currentTime = Math.max(0, Math.min(duration, currentTime + sec));
+  updateProgress();
+}
+
+// SEEKBAR DRAG
+var seeking = false;
+var wrap = document.getElementById('progress-wrap');
+function getSeekPct(e){
+  var rect = wrap.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  return Math.max(0, Math.min(1, x / rect.width));
+}
+wrap.addEventListener('mousedown', function(e){ seeking=true; var p=getSeekPct(e); currentTime=p*duration; updateProgress(); });
+document.addEventListener('mousemove', function(e){ if(seeking){ var p=getSeekPct(e); currentTime=p*duration; updateProgress(); }});
+document.addEventListener('mouseup', function(){ seeking=false; });
+wrap.addEventListener('touchstart', function(e){ seeking=true; var p=getSeekPct(e); currentTime=p*duration; updateProgress(); },{passive:true});
+document.addEventListener('touchmove', function(e){ if(seeking){ var p=getSeekPct(e); currentTime=p*duration; updateProgress(); }},{passive:true});
+document.addEventListener('touchend', function(){ seeking=false; });
+
+// SPEED
+function toggleSpeedMenu(){
+  document.getElementById('speed-menu').classList.toggle('show');
+}
+function setSpeed(s){
+  speed = s;
+  document.getElementById('speed-btn').textContent = s+'x';
+  document.querySelectorAll('.speed-opt').forEach(function(o){ o.classList.toggle('active', parseFloat(o.textContent)===s); });
+  document.getElementById('speed-menu').classList.remove('show');
+}
+document.addEventListener('click', function(e){ if(!e.target.closest('.ctrl-right')) document.getElementById('speed-menu').classList.remove('show'); });
+
+// FULLSCREEN
+function toggleFullscreen(){
+  var p = document.getElementById('player-box');
+  if(!document.fullscreenElement){ p.requestFullscreen().catch(function(){}); }
+  else { document.exitFullscreen(); }
+}
+
+// CAPTIONS
+function toggleCaptions(){
+  captionsOn = !captionsOn;
+  var cap = document.getElementById('caption-overlay');
+  var btn = document.getElementById('caption-btn');
+  cap.classList.toggle('show', captionsOn);
+  btn.style.color = captionsOn ? '#4d96ff' : '#fff';
+  if(captionsOn){
+    var captions = ['This is an auto-generated caption...','Captions powered by VYBEOZA AI','Enjoy the video!'];
+    var i=0;
+    setInterval(function(){ cap.textContent = captions[i%captions.length]; i++; }, 3000);
+  }
+}
+
+// AD
+function showAd(){
+  adShown = true;
+  var overlay = document.getElementById('ad-overlay');
+  overlay.classList.add('show');
+  var t = 15;
+  var adTimer = document.getElementById('ad-timer');
+  var skipBtn = document.getElementById('skip-btn');
+  var countdown = document.getElementById('ad-countdown');
+  adTimer.textContent = t;
+  clearInterval(playerInterval);
+  var adInt = setInterval(function(){
+    t--;
+    adTimer.textContent = t;
+    if(t <= 5){ skipBtn.classList.add('visible'); }
+    if(t <= 0){ overlay.classList.remove('show'); skipBtn.classList.remove('visible'); clearInterval(adInt); adShown=false; }
+  }, 1000);
+}
+function skipAd(){
+  document.getElementById('ad-overlay').classList.remove('show');
+  document.getElementById('skip-btn').classList.remove('visible');
+  adShown = false;
+}
+
+// LIKE SAVE VIBE
+function toggleLike(){
+  liked = !liked;
+  var btn = document.getElementById('like-btn');
+  btn.classList.toggle('liked', liked);
+  var c = parseInt(document.getElementById('like-count').textContent)||1200;
+  document.getElementById('like-count').textContent = liked ? (c+1) : (c-1);
+}
+function toggleSave(){
+  saved = !saved;
+  var btn = document.getElementById('save-btn');
+  btn.style.color = saved ? '#ffd93d' : '';
+  btn.textContent = saved ? '🔖 Saved' : '🔖 Save';
+}
+function toggleVibe(){
+  vibing = !vibing;
+  var btn = document.getElementById('vibe-btn');
+  btn.textContent = vibing ? '✓ Vibing' : '+ Vibe';
+  btn.classList.toggle('vibing', vibing);
+}
+function repost(){ alert('Reposted to your feed!'); }
+function downloadVideo(){ alert('Download started (demo)'); }
+
+// DESC & COMMENTS
+function toggleDesc(){
+  var b = document.getElementById('desc-body');
+  var a = document.getElementById('desc-arrow');
+  b.classList.toggle('show');
+  a.textContent = b.classList.contains('show') ? '▲' : '▼';
+}
+function toggleComments(){
+  var b = document.getElementById('comments-body');
+  var a = document.getElementById('comment-arrow');
+  b.classList.toggle('show');
+  a.textContent = b.classList.contains('show') ? '▲' : '▼';
+  if(b.classList.contains('show')) renderComments();
+}
+
+var comments = [
+  {name:'Krishna',text:'This is fire! 🔥 Keep it up.',time:'2 hrs ago'},
+  {name:'Suryansh',text:'Bhai bahut acha content hai yaar!',time:'5 hrs ago'},
+  {name:'Priya',text:'Loved this video! Subscribed.',time:'1 day ago'},
+];
+function renderComments(){
+  var list = document.getElementById('comment-list');
+  list.innerHTML = '';
+  comments.forEach(function(c, i){
+    var el = document.createElement('div');
+    el.className = 'comment-item';
+    el.innerHTML = '<div class="comment-av">'+c.name[0]+'</div>'
+      +'<div class="comment-body">'
+      +'<div class="comment-name">'+c.name+' <span style="color:#666;font-weight:400;font-size:11px">'+c.time+'</span></div>'
+      +'<div class="comment-text">'+c.text+'</div>'
+      +'<div class="comment-actions">'
+      +'<button class="comment-action">👍 Like</button>'
+      +'<button class="comment-action" onclick="replyTo('+i+')">↩ Reply</button>'
+      +(c.isOwn?'<button class="comment-action" onclick="editComment('+i+')">✏️ Edit</button>':'')
+      +'</div></div>';
+    list.appendChild(el);
+  });
+}
+function postComment(){
+  var inp = document.getElementById('comment-input');
+  var txt = inp.value.trim();
+  if(!txt) return;
+  var u = JSON.parse(localStorage.getItem('vybeoza_user')||'{}');
+  comments.unshift({name: u.name||'You', text:txt, time:'Just now', isOwn:true});
+  inp.value = '';
+  document.getElementById('comment-count').textContent = comments.length;
+  renderComments();
+}
+function replyTo(i){ document.getElementById('comment-input').value = '@'+comments[i].name+' '; document.getElementById('comment-input').focus(); }
+function editComment(i){
+  var txt = prompt('Edit comment:', comments[i].text);
+  if(txt){ comments[i].text = txt; renderComments(); }
+}
+
+// SHARE
+function openShare(){ document.getElementById('share-modal').classList.add('show'); }
+function closeShare(){ document.getElementById('share-modal').classList.remove('show'); }
+function shareVia(p){ alert('Shared via '+p+'!'); closeShare(); }
+function copyLink(){ navigator.clipboard.writeText(document.getElementById('share-link').textContent).then(function(){ alert('Link copied!'); }).catch(function(){ alert('Copied!'); }); }
+
+// SUGGESTIONS
+var suggestions = [
+  {title:'Amazing Tech Builds 2024',channel:'TechVyber',views:'45K',duration:'15:22',emoji:'⚙️'},
+  {title:'Best Gaming Moments Compilation',channel:'GameVybe',views:'120K',duration:'8:44',emoji:'🎮'},
+  {title:'Cooking Secrets Revealed',channel:'FoodieVybe',views:'33K',duration:'22:10',emoji:'🍳'},
+  {title:'Travel Vlog: Hidden Gems',channel:'WanderVybe',views:'18K',duration:'31:05',emoji:'🗺️'},
+  {title:'Lo-fi Music for Study',channel:'VibeMusic',views:'500K',duration:'2:00:00',emoji:'🎵'},
+];
+var sl = document.getElementById('suggest-list');
+suggestions.forEach(function(s){
+  var el = document.createElement('div');
+  el.className = 'suggest-card';
+  el.innerHTML = '<div class="suggest-thumb">'+s.emoji+'<span class="suggest-dur">'+s.duration+'</span></div>'
+    +'<div class="suggest-info"><div class="suggest-title2">'+s.title+'</div><div class="suggest-meta">'+s.channel+' • '+s.views+' views</div></div>';
+  el.onclick = function(){ localStorage.setItem('vybeoza_watch', JSON.stringify(s)); location.reload(); };
+  sl.appendChild(el);
+});
+</script>
+</body>
+</html>
