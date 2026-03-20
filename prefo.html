@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VYBEOZA - Add Prefo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:#ff2d78;--accent2:#00f0c8;--accent3:#a259ff;--font:"DM Sans",sans-serif}
+html,body{height:100%;background:#000;color:#fff;font-family:var(--font);overflow:hidden}
+button{font-family:var(--font);cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+/* CAMERA VIEW */
+.camera-wrap{position:fixed;inset:0;background:#000;display:flex;flex-direction:column}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+canvas#main-canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;display:none}
+
+/* TOP BAR */
+.cam-top{position:absolute;top:0;left:0;right:0;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:10;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent)}
+.cam-close{background:none;border:none;color:#fff;font-size:24px;padding:4px}
+.cam-flip{background:none;border:none;color:#fff;font-size:22px;padding:4px}
+.cam-flash{background:none;border:none;color:#fff;font-size:22px;padding:4px}
+
+/* FILTER BAR */
+.filter-bar{position:absolute;top:60px;left:0;right:0;display:flex;gap:8px;overflow-x:auto;padding:8px 12px;scrollbar-width:none;z-index:10}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-pill{flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;border:2px solid rgba(255,255,255,.4);background:rgba(0,0,0,.3);color:#fff;backdrop-filter:blur(4px);transition:all .2s}
+.filter-pill.on{border-color:#fff;background:rgba(255,255,255,.2)}
+.filter-pill:active{transform:scale(.95)}
+
+/* STICKER TRAY */
+.sticker-tray{position:absolute;top:108px;left:0;right:0;display:flex;gap:6px;overflow-x:auto;padding:6px 12px;scrollbar-width:none;z-index:10;display:none}
+.sticker-tray.show{display:flex}
+.sticker-tray::-webkit-scrollbar{display:none}
+.sticker-btn{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;font-size:22px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+
+/* BOTTOM CONTROLS */
+.cam-bottom{position:absolute;bottom:0;left:0;right:0;padding:16px 16px 32px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.6))}
+.shutter-row{display:flex;align-items:center;justify-content:space-around;margin-bottom:14px}
+.gallery-btn{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.gallery-preview{width:52px;height:52px;border-radius:12px;object-fit:cover;display:none}
+.shutter-btn{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.shutter-btn:active{transform:scale(.92)}
+.shutter-inner{width:54px;height:54px;border-radius:50%;background:#fff}
+.flip-btn-bot{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mode-row{display:flex;justify-content:center;gap:20px}
+.mode-btn{background:none;border:none;color:rgba(255,255,255,.6);font-size:12px;font-weight:600;padding:4px 8px;letter-spacing:.5px;text-transform:uppercase}
+.mode-btn.on{color:#fff;border-bottom:2px solid #fff}
+
+/* SIDE BUTTONS */
+.side-btns{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:10}
+.side-btn{width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.4);border:none;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+
+/* PREVIEW / EDIT MODE */
+.edit-wrap{position:fixed;inset:0;background:#000;z-index:100;display:none;flex-direction:column}
+.edit-wrap.show{display:flex}
+.edit-canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+canvas#edit-canvas{max-width:100%;max-height:100%;object-fit:contain}
+.edit-img{max-width:100%;max-height:100%;object-fit:contain}
+.edit-top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
+.edit-discard{background:none;border:none;color:#fff;font-size:14px}
+.edit-next-btn{background:var(--accent);border:none;color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700}
+
+/* TEXT OVERLAY */
+.text-overlay-wrap{position:absolute;inset:0;pointer-events:none;z-index:5}
+.text-overlay{position:absolute;color:#fff;font-family:var(--font);font-size:20px;font-weight:700;text-shadow:0 0 8px rgba(0,0,0,.8);cursor:move;user-select:none;pointer-events:all;padding:4px 8px;border-radius:6px;white-space:nowrap}
+
+/* EDIT TOOLS */
+.edit-tools{display:flex;justify-content:space-around;padding:10px 16px;flex-shrink:0;border-top:1px solid rgba(255,255,255,.1)}
+.etool{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#fff;font-size:10px}
+.etool-ico{font-size:22px}
+
+/* CAPTION INPUT */
+.caption-input-wrap{padding:10px 16px;flex-shrink:0}
+.caption-inp{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:10px 16px;color:#fff;font-size:13px;outline:none}
+.caption-inp::placeholder{color:rgba(255,255,255,.5)}
+
+/* POST BUTTON */
+.post-row{display:flex;gap:8px;padding:10px 16px 24px;flex-shrink:0}
+.post-story-btn{flex:1;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:700}
+.post-close-btn{flex:1;background:rgba(255,255,255,.1);border:none;color:#fff;padding:13px;border-radius:12px;font-size:14px;font-weight:600}
+
+/* FILTER OVERLAYS (CSS filters) */
+.filter-normal{filter:none}
+.filter-warm{filter:sepia(30%) saturate(120%) brightness(105%)}
+.filter-cool{filter:hue-rotate(20deg) saturate(80%) brightness(105%)}
+.filter-bw{filter:grayscale(100%)}
+.filter-vivid{filter:saturate(160%) contrast(110%)}
+.filter-vintage{filter:sepia(50%) saturate(80%) brightness(95%) contrast(95%)}
+.filter-fade{filter:brightness(110%) saturate(70%) contrast(90%)}
+.filter-drama{filter:contrast(130%) brightness(90%) saturate(110%)}
+.filter-glow{filter:brightness(115%) saturate(130%) blur(0px) drop-shadow(0 0 8px rgba(255,45,120,.4))}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid #333;padding:7px 18px;border-radius:18px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- CAMERA MODE -->
+<div class="camera-wrap" id="camera-wrap">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="main-canvas"></canvas>
+
+  <!-- TOP -->
+  <div class="cam-top">
+    <button class="cam-close" onclick="history.back()">✕</button>
+    <span style="font-size:13px;font-weight:700;letter-spacing:1px">PREFO</span>
+    <button class="cam-flash" id="flash-btn" onclick="toggleFlash()">⚡</button>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-pill on" onclick="setFilter('normal',this)">Normal</button>
+    <button class="filter-pill" onclick="setFilter('warm',this)">Warm 🌅</button>
+    <button class="filter-pill" onclick="setFilter('cool',this)">Cool 🧊</button>
+    <button class="filter-pill" onclick="setFilter('bw',this)">B&W</button>
+    <button class="filter-pill" onclick="setFilter('vivid',this)">Vivid 🎨</button>
+    <button class="filter-pill" onclick="setFilter('vintage',this)">Vintage</button>
+    <button class="filter-pill" onclick="setFilter('fade',this)">Fade</button>
+    <button class="filter-pill" onclick="setFilter('drama',this)">Drama</button>
+    <button class="filter-pill" onclick="setFilter('glow',this)">Glow ✨</button>
+  </div>
+
+  <!-- STICKER TRAY -->
+  <div class="sticker-tray" id="sticker-tray">
+    <button class="sticker-btn" onclick="addSticker('🔥')">🔥</button>
+    <button class="sticker-btn" onclick="addSticker('✨')">✨</button>
+    <button class="sticker-btn" onclick="addSticker('💫')">💫</button>
+    <button class="sticker-btn" onclick="addSticker('❤️')">❤️</button>
+    <button class="sticker-btn" onclick="addSticker('😂')">😂</button>
+    <button class="sticker-btn" onclick="addSticker('🎉')">🎉</button>
+    <button class="sticker-btn" onclick="addSticker('🚀')">🚀</button>
+    <button class="sticker-btn" onclick="addSticker('🌸')">🌸</button>
+    <button class="sticker-btn" onclick="addSticker('💪')">💪</button>
+    <button class="sticker-btn" onclick="addSticker('👑')">👑</button>
+    <button class="sticker-btn" onclick="addSticker('🎵')">🎵</button>
+    <button class="sticker-btn" onclick="addSticker('⚡')">⚡</button>
+  </div>
+
+  <!-- SIDE BUTTONS -->
+  <div class="side-btns">
+    <button class="side-btn" onclick="toggleStickers()" title="Stickers">🎭</button>
+    <button class="side-btn" onclick="addText()" title="Add Text">T</button>
+    <button class="side-btn" onclick="toggleTimer()" title="Timer">⏱</button>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="cam-bottom">
+    <div class="shutter-row">
+      <!-- Gallery -->
+      <div style="position:relative">
+        <button class="gallery-btn" id="gallery-btn" onclick="openGallery()">🖼️</button>
+        <input type="file" id="gallery-inp" accept="image/*,video/*" style="display:none">
+        <img class="gallery-preview" id="gallery-preview">
+      </div>
+      <!-- Shutter -->
+      <button class="shutter-btn" id="shutter-btn" onclick="capturePhoto()">
+        <div class="shutter-inner"></div>
+      </button>
+      <!-- Flip -->
+      <button class="flip-btn-bot" onclick="flipCamera()">🔄</button>
+    </div>
+    <div class="mode-row">
+      <button class="mode-btn" onclick="setMode('photo',this)">Photo</button>
+      <button class="mode-btn on" onclick="setMode('story',this)">Story</button>
+      <button class="mode-btn" onclick="setMode('video',this)">Video</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT / PREVIEW MODE -->
+<div class="edit-wrap" id="edit-wrap">
+  <div class="edit-top">
+    <button class="edit-discard" onclick="discardEdit()">✕ Discard</button>
+    <span style="font-size:13px;font-weight:700">Edit Prefo</span>
+    <button class="edit-next-btn" onclick="postPrefo()">Post →</button>
+  </div>
+
+  <div class="edit-canvas-wrap" id="edit-canvas-wrap">
+    <canvas id="edit-canvas"></canvas>
+    <div class="text-overlay-wrap" id="text-overlay-wrap"></div>
+  </div>
+
+  <!-- EDIT TOOLS -->
+  <div class="edit-tools">
+    <button class="etool" onclick="editFilter('warm')"><span class="etool-ico">🌅</span>Warm</button>
+    <button class="etool" onclick="editFilter('vivid')"><span class="etool-ico">🎨</span>Vivid</button>
+    <button class="etool" onclick="editFilter('bw')"><span class="etool-ico">🖤</span>B&W</button>
+    <button class="etool" onclick="addEditText()"><span class="etool-ico">T</span>Text</button>
+    <button class="etool" onclick="addEditSticker()"><span class="etool-ico">🎭</span>Sticker</button>
+    <button class="etool" onclick="editFilter('normal')"><span class="etool-ico">✨</span>Reset</button>
+  </div>
+
+  <div class="caption-input-wrap">
+    <input class="caption-inp" id="caption-inp" placeholder="Add a caption... (optional)">
+  </div>
+
+  <div class="post-row">
+    <button class="post-story-btn" onclick="postPrefo()">📖 Add to Prefo</button>
+    <button class="post-close-btn" onclick="discardEdit()">Discard</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html';
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},1800);}
+
+var stream=null, facingMode='user', curFilter='normal', curMode='story', flashOn=false, timerSecs=0;
+var capturedImage=null;
+var editFilterName='normal';
+
+// START CAMERA
+async function startCamera(){
+  try{
+    if(stream){stream.getTracks().forEach(function(t){t.stop();});}
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:facingMode,width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
+    var vid=document.getElementById('video');
+    vid.srcObject=stream;
+    vid.play();
+    applyVideoFilter(curFilter);
+  }catch(e){
+    // Camera not available - show gallery only mode
+    toast('Camera not available. Use gallery instead.');
+    document.getElementById('video').style.background='linear-gradient(135deg,#ff2d78,#a259ff)';
+  }
+}
+
+function flipCamera(){
+  facingMode=facingMode==='user'?'environment':'user';
+  startCamera();
+  toast(facingMode==='user'?'Front camera':'Back camera');
+}
+
+function toggleFlash(){
+  flashOn=!flashOn;
+  document.getElementById('flash-btn').style.color=flashOn?'#ffd700':'#fff';
+  toast(flashOn?'Flash on ⚡':'Flash off');
+}
+
+// FILTERS
+var FILTER_CSS={
+  normal:'none',
+  warm:'sepia(30%) saturate(120%) brightness(105%)',
+  cool:'hue-rotate(20deg) saturate(80%) brightness(105%)',
+  bw:'grayscale(100%)',
+  vivid:'saturate(160%) contrast(110%)',
+  vintage:'sepia(50%) saturate(80%) brightness(95%) contrast(95%)',
+  fade:'brightness(110%) saturate(70%) contrast(90%)',
+  drama:'contrast(130%) brightness(90%) saturate(110%)',
+  glow:'brightness(115%) saturate(130%)'
+};
+
+function setFilter(name,btn){
+  curFilter=name;
+  document.querySelectorAll('.filter-pill').forEach(function(p){p.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  applyVideoFilter(name);
+}
+
+function applyVideoFilter(name){
+  var vid=document.getElementById('video');
+  vid.style.filter=FILTER_CSS[name]||'none';
+}
+
+// CAPTURE
+function capturePhoto(){
+  var vid=document.getElementById('video');
+  if(!vid.videoWidth&&!vid.srcObject){
+    toast('No camera available — use gallery');
+    return;
+  }
+  var canvas=document.getElementById('main-canvas');
+  canvas.width=vid.videoWidth||640;
+  canvas.height=vid.videoHeight||480;
+  var ctx=canvas.getContext('2d');
+  if(facingMode==='user'){
+    ctx.translate(canvas.width,0);
+    ctx.scale(-1,1);
+  }
+  ctx.filter=FILTER_CSS[curFilter]||'none';
+  ctx.drawImage(vid,0,0,canvas.width,canvas.height);
+  capturedImage=canvas.toDataURL('image/jpeg',0.9);
+  openEditMode(capturedImage);
+}
+
+// GALLERY
+function openGallery(){
+  document.getElementById('gallery-inp').click();
+}
+document.getElementById('gallery-inp').onchange=function(){
+  var f=this.files[0]; if(!f) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    capturedImage=e.target.result;
+    openEditMode(capturedImage);
+  };
+  reader.readAsDataURL(f);
+};
+
+// STICKERS
+function toggleStickers(){
+  document.getElementById('sticker-tray').classList.toggle('show');
+}
+var overlayStickers=[];
+function addSticker(emoji){
+  var wrap=document.getElementById('text-overlay-wrap');
+  var el=document.createElement('div');
+  el.className='text-overlay';
+  el.textContent=emoji;
+  el.style.cssText='position:absolute;top:30%;left:40%;font-size:40px;cursor:move;user-select:none;pointer-events:all;';
+  makeDraggable(el);
+  wrap.appendChild(el);
+  document.getElementById('sticker-tray').classList.remove('show');
+}
+
+function addText(){
+  var txt=prompt('Enter text:');
+  if(!txt) return;
+  var wrap=document.getElementById('text-overlay-wrap');
+  var el=document.createElement('div');
+  el.className='text-overlay';
+  el.textContent=txt;
+  el.style.cssText='position:absolute;top:40%;left:20%;font-size:22px;cursor:move;user-select:none;pointer-events:all;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px;';
+  makeDraggable(el);
+  wrap.appendChild(el);
+}
+
+function makeDraggable(el){
+  var ox,oy,ex,ey;
+  function onDown(e){
+    e.preventDefault();
+    var touch=e.touches?e.touches[0]:e;
+    ox=touch.clientX-el.offsetLeft;
+    oy=touch.clientY-el.offsetTop;
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('touchmove',onMove,{passive:false});
+    document.addEventListener('mouseup',onUp);
+    document.addEventListener('touchend',onUp);
+  }
+  function onMove(e){
+    e.preventDefault();
+    var touch=e.touches?e.touches[0]:e;
+    el.style.left=(touch.clientX-ox)+'px';
+    el.style.top=(touch.clientY-oy)+'px';
+  }
+  function onUp(){
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    document.removeEventListener('touchend',onUp);
+  }
+  el.addEventListener('mousedown',onDown);
+  el.addEventListener('touchstart',onDown,{passive:false});
+  el.addEventListener('dblclick',function(){
+    if(confirm('Remove this?'))el.remove();
+  });
+}
+
+// TIMER
+var timerStates=[0,3,10];var timerIdx=0;
+function toggleTimer(){
+  timerIdx=(timerIdx+1)%timerStates.length;
+  timerSecs=timerStates[timerIdx];
+  toast(timerSecs===0?'Timer off':'Timer: '+timerSecs+'s');
+}
+
+// MODE
+function setMode(m,btn){
+  curMode=m;
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+}
+
+// EDIT MODE
+function openEditMode(imgData){
+  var ew=document.getElementById('edit-wrap');
+  ew.classList.add('show');
+  var canvas=document.getElementById('edit-canvas');
+  var wrap=document.getElementById('edit-canvas-wrap');
+  var ww=wrap.clientWidth, wh=wrap.clientHeight;
+  var img=new Image();
+  img.onload=function(){
+    var ar=img.width/img.height;
+    if(ww/wh>ar){canvas.height=wh;canvas.width=wh*ar;}
+    else{canvas.width=ww;canvas.height=ww/ar;}
+    var ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    editFilterName='normal';
+  };
+  img.src=imgData;
+}
+
+function editFilter(name){
+  editFilterName=name;
+  var canvas=document.getElementById('edit-canvas');
+  var ctx=canvas.getContext('2d');
+  var img=new Image();
+  img.onload=function(){
+    ctx.filter=FILTER_CSS[name]||'none';
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    ctx.filter='none';
+  };
+  img.src=capturedImage;
+  toast(name.charAt(0).toUpperCase()+name.slice(1)+' filter applied');
+}
+
+function addEditText(){
+  var txt=prompt('Enter text for your Prefo:');
+  if(!txt) return;
+  var canvas=document.getElementById('edit-canvas');
+  var ctx=canvas.getContext('2d');
+  ctx.font='bold 28px DM Sans, sans-serif';
+  ctx.fillStyle='rgba(0,0,0,0.5)';
+  ctx.fillRect(20,canvas.height/2-30,canvas.width-40,50);
+  ctx.fillStyle='#fff';
+  ctx.textAlign='center';
+  ctx.fillText(txt,canvas.width/2,canvas.height/2+12);
+  toast('Text added!');
+}
+
+function addEditSticker(){
+  var stickers=['🔥','✨','💫','❤️','😂','🎉','🚀','🌸','💪','👑'];
+  var s=stickers[Math.floor(Math.random()*stickers.length)];
+  var canvas=document.getElementById('edit-canvas');
+  var ctx=canvas.getContext('2d');
+  ctx.font='48px serif';
+  ctx.fillText(s,canvas.width/2-24,canvas.height/2+16);
+  toast(s+' sticker added!');
+}
+
+function discardEdit(){
+  document.getElementById('edit-wrap').classList.remove('show');
+  capturedImage=null;
+  document.getElementById('text-overlay-wrap').innerHTML='';
+}
+
+function postPrefo(){
+  var caption=document.getElementById('caption-inp').value;
+  toast('Prefo posted! 🎉');
+  setTimeout(function(){ window.location.href='flash.html'; },1200);
+}
+
+// Init
+startCamera();
+</script>
+</body>
+</html>
