@@ -13,158 +13,193 @@ button,input,select,textarea{font-family:var(--font);cursor:pointer}
 .topbar{position:sticky;top:0;height:52px;background:var(--bg);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:50;border-bottom:1px solid var(--border)}
 .back-btn{background:none;border:none;color:var(--text);font-size:20px;padding:4px 8px 4px 0}
 .topbar h2{font-family:var(--brand);font-size:18px;font-weight:700;flex:1}
-.inner{max-width:600px;margin:0 auto;padding:16px;padding-bottom:80px}
-
-/* TYPE CARDS */
-.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-.type-card{background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px;border-bottom:1px solid var(--border)}
+.type-card{background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s}
 .type-card:hover,.type-card.on{border-color:var(--accent);background:#ff2d780d}
 .type-ico{font-size:28px;display:block;margin-bottom:7px}
 .type-name{font-size:13px;font-weight:600}
 .type-desc{font-size:10px;color:var(--muted);margin-top:3px}
-
-/* FLOW LIMIT */
-.flow-note{font-size:11px;color:var(--accent);background:#ff2d7815;border:1px solid #ff2d7830;border-radius:8px;padding:7px 12px;margin-bottom:12px;display:none}
-.flow-note.show{display:block}
-
-/* UPLOAD AREA */
-.upload-area{background:var(--bg3);border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px}
-.upload-area:hover,.upload-area.has-file{border-color:var(--accent);background:#ff2d780a}
-.upload-ico{font-size:36px;display:block;margin-bottom:8px}
-.upload-txt{font-size:13px;color:var(--muted);margin-bottom:10px}
-.upload-lbl{display:inline-block;background:var(--accent);color:#fff;padding:8px 22px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.upload-lbl:hover{opacity:.88}
-.preview-row{background:var(--bg2);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:none;align-items:center;gap:8px}
-.preview-row.show{display:flex}
-.preview-name{font-size:12px;color:var(--accent2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rm-btn{background:none;border:none;color:var(--muted);font-size:16px;flex-shrink:0}
-
-/* FORM */
+.step{display:none;padding:16px;padding-bottom:120px}
+.step.show{display:block}
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.upload-zone:hover{border-color:var(--accent);background:#ff2d780a}
+.upload-zone-ico{font-size:48px;display:block;margin-bottom:12px}
+.upload-zone-title{font-size:15px;font-weight:600;margin-bottom:6px}
+.upload-zone-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.upload-zone-btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 28px;border-radius:20px;font-size:13px;font-weight:600}
+.preview-wrap{display:none;border-radius:12px;overflow:hidden;background:#000;position:relative}
+.preview-wrap.show{display:block}
+.video-preview{width:100%;max-height:280px;object-fit:contain;background:#000;display:block}
+.img-preview{width:100%;max-height:280px;object-fit:contain;background:#000;border-radius:12px;display:none}
+.change-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.75);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer}
+.next-btn{width:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:14px;border-radius:10px;font-size:14px;font-weight:700;margin-top:16px;display:none}
+.next-btn.show{display:block}
 .inp-label{font-size:12px;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
 .req{color:var(--accent);font-size:11px}
-.opt-tag{color:var(--muted);font-size:10px}
 .char-count{font-size:10px;color:var(--muted)}
-.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:13px;outline:none;transition:border .2s;margin-bottom:12px}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:13px;outline:none;transition:border .2s;margin-bottom:14px}
 .inp:focus{border-color:var(--accent3)}
 .inp::placeholder{color:var(--muted)}
 .inp.err{border-color:var(--accent)}
-textarea.inp{resize:none;min-height:80px;line-height:1.6}
-
-/* AUTO CAP */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+textarea.inp{resize:none;min-height:90px;line-height:1.6}
+.err-msg{color:var(--accent);font-size:12px;margin:-10px 0 10px;display:none}
+.err-msg.show{display:block}
+.thumb-title{font-size:13px;font-weight:600;margin-bottom:10px}
+.thumb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.thumb-opt{border:2px solid var(--border);border-radius:10px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .2s;background:var(--bg3);position:relative;overflow:hidden}
+.thumb-opt:hover,.thumb-opt.on{border-color:var(--accent)}
+.thumb-opt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb-lbl{font-size:9px;color:var(--muted);position:relative;z-index:1;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:4px}
+.thumb-ico{font-size:18px}
+.thumb-upload{border:2px dashed var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3);margin-bottom:14px;font-size:12px;color:var(--muted)}
+.thumb-upload:hover{border-color:var(--accent3)}
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer}
+.section-hdr-left .stitle{font-size:13px;font-weight:600}
+.section-hdr-left .ssub{font-size:11px;color:var(--muted);margin-top:2px}
+.sarrow{color:var(--muted);font-size:14px;transition:transform .2s}
+.sarrow.open{transform:rotate(180deg)}
+.sbody{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.sbody.open{display:block}
+.trow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.trow:last-child{border:none}
+.tlbl{font-size:13px}
+.tsub{font-size:10px;color:var(--muted);margin-top:2px}
 .toggle{width:42px;height:24px;background:var(--bg4);border-radius:12px;position:relative;border:none;transition:background .2s;flex-shrink:0}
 .toggle.on{background:var(--accent)}
 .toggle::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
 .toggle.on::after{transform:translateX(18px)}
-
-/* EXTRA TAGS */
-.extra-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
-.etag{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:16px;font-size:11px;transition:all .2s}
-.etag:hover{border-color:var(--accent3);color:var(--text)}
-
-/* SUBMIT */
-.submit-btn{width:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:14px;border-radius:10px;font-size:14px;font-weight:700;transition:opacity .2s}
-.submit-btn:hover{opacity:.88}
-
-.err-msg{color:var(--accent);font-size:12px;margin:-8px 0 10px;display:none}
-.err-msg.show{display:block}
-
+.vis-opts{display:flex;flex-direction:column;gap:6px;padding-top:10px}
+.vopt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s}
+.vopt.on{border-color:var(--accent);background:#ff2d780a}
+.vradio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.vopt.on .vradio{border-color:var(--accent);background:var(--accent)}
+.vdot{width:8px;height:8px;border-radius:50%;background:#fff;display:none}
+.vopt.on .vdot{display:block}
+.vname{font-size:13px;font-weight:600}
+.vdesc{font-size:11px;color:var(--muted);margin-top:2px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:var(--bg);border-top:1px solid var(--border);display:flex;gap:10px;z-index:50}
+.draft-btn{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:13px;border-radius:10px;font-size:13px;font-weight:600}
+.pub-btn{flex:2;background:linear-gradient(90deg,var(--accent),var(--accent3));border:none;color:#fff;padding:13px;border-radius:10px;font-size:14px;font-weight:700}
+.pub-btn:disabled{opacity:.5}
+.uploading-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
+.uploading-ov.show{display:flex}
+.up-title{font-size:18px;font-weight:700}
+.up-sub{font-size:13px;color:var(--muted);text-align:center}
+.up-pct{font-size:32px;font-weight:800;color:var(--accent)}
+.up-bar-wrap{width:280px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.up-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:3px;width:0%;transition:width .4s}
+.up-link{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--muted);text-align:center;display:none;margin-top:8px}
+.up-link.show{display:block}
+.up-link a{color:var(--accent2);text-decoration:none;font-weight:600}
 .bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg);border-top:1px solid var(--border);z-index:100;justify-content:space-around;align-items:center}
 .bn-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;text-decoration:none}
+.bn-btn.on{color:var(--accent)}
 .bn-ico{font-size:19px;line-height:1}
 .bn-lbl{font-size:7px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
 .bn-fab{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:50%;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #ff2d7840}
-.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:7px 18px;border-radius:18px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid var(--border);padding:7px 18px;border-radius:18px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1}
-@media(max-width:768px){.bnav{display:flex}}
+@media(max-width:768px){.bnav{display:flex}.bottom-bar{bottom:56px}}
 </style>
 </head>
 <body>
 <div class="topbar">
-  <button class="back-btn" onclick="history.back()">←</button>
-  <h2>New Post</h2>
+  <button class="back-btn" onclick="goBack()">←</button>
+  <h2 id="page-title">New Post</h2>
 </div>
-<div class="inner">
-  <!-- TYPE SELECTION: 3 options only -->
+
+<!-- STEP 1: SELECT TYPE + FILE -->
+<div class="step show" id="step1">
   <div class="type-grid">
-    <div class="type-card on" id="tc-viso" onclick="selectType('viso')">
-      <span class="type-ico">🎬</span>
-      <div class="type-name">VISO</div>
-      <div class="type-desc">Video or photo post</div>
+    <div class="type-card on" id="tc-viso" onclick="selType('viso')"><span class="type-ico">🎬</span><div class="type-name">VISO</div><div class="type-desc">Video or photo</div></div>
+    <div class="type-card" id="tc-flow" onclick="selType('flow')"><span class="type-ico">📽️</span><div class="type-name">Flow</div><div class="type-desc">Short reel (max 1:30)</div></div>
+    <div class="type-card" id="tc-live" onclick="selType('live')"><span class="type-ico">🔴</span><div class="type-name">Go Live</div><div class="type-desc">Start streaming</div></div>
+  </div>
+  <div style="padding:16px">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-inp').click()">
+      <span class="upload-zone-ico">📁</span>
+      <div class="upload-zone-title">Select file to upload</div>
+      <div class="upload-zone-sub">Video or photo from your device</div>
+      <span class="upload-zone-btn">Browse Files</span>
     </div>
-    <div class="type-card" id="tc-flow" onclick="selectType('flow')">
-      <span class="type-ico">📽️</span>
-      <div class="type-name">Flow</div>
-      <div class="type-desc">Short reel (max 1:30)</div>
+    <input type="file" id="file-inp" accept="image/*,video/*" style="display:none">
+    <div class="preview-wrap" id="preview-wrap">
+      <video class="video-preview" id="video-prev" controls playsinline></video>
+      <img class="img-preview" id="img-prev">
+      <button class="change-btn" onclick="document.getElementById('file-inp').click()">Change file</button>
     </div>
-    <div class="type-card" id="tc-live" onclick="selectType('live')">
-      <span class="type-ico">🔴</span>
-      <div class="type-name">Go Live</div>
-      <div class="type-desc">Start streaming now</div>
+    <button class="next-btn" id="next-btn" onclick="goToDetails()">Next: Add Details →</button>
+  </div>
+</div>
+
+<!-- STEP 2: DETAILS -->
+<div class="step" id="step2">
+  <!-- TITLE -->
+  <div class="inp-label"><span>Title <span class="req">* Required</span></span><span class="char-count"><span id="tc">0</span>/100</span></div>
+  <input class="inp" id="post-title" placeholder="Add a title that describes your video..." maxlength="100" oninput="document.getElementById('tc').textContent=this.value.length;this.classList.remove('err')">
+  <div class="err-msg" id="title-err">Title is required!</div>
+
+  <!-- DESCRIPTION -->
+  <div class="inp-label"><span>Description</span><span style="font-size:10px;color:var(--muted)">Optional</span></div>
+  <textarea class="inp" id="post-desc" placeholder="Tell viewers about your video..." rows="4"></textarea>
+
+  <!-- THUMBNAIL -->
+  <div class="thumb-title">Thumbnail</div>
+  <div class="thumb-grid" id="thumb-grid">
+    <div class="thumb-opt on" id="th0" onclick="pickThumb(0)"><span class="thumb-ico">🎬</span><span class="thumb-lbl">Auto 1</span></div>
+    <div class="thumb-opt" id="th1" onclick="pickThumb(1)"><span class="thumb-ico">🎬</span><span class="thumb-lbl">Auto 2</span></div>
+    <div class="thumb-opt" id="th2" onclick="pickThumb(2)"><span class="thumb-ico">🎬</span><span class="thumb-lbl">Auto 3</span></div>
+  </div>
+  <div class="thumb-upload" onclick="document.getElementById('thumb-inp').click()">📷 Upload custom thumbnail<input type="file" id="thumb-inp" accept="image/*" style="display:none" onchange="setCustomThumb(this)"></div>
+
+  <!-- VISIBILITY -->
+  <div class="section-card">
+    <div class="section-hdr" onclick="toggleSec('vis')">
+      <div class="section-hdr-left"><div class="stitle">Visibility</div><div class="ssub" id="vis-sub">Public — Everyone can watch</div></div>
+      <span class="sarrow" id="vis-arr">▼</span>
+    </div>
+    <div class="sbody" id="vis-body">
+      <div class="vis-opts">
+        <div class="vopt on" id="vopt-public" onclick="setVis('public')"><div class="vradio"><div class="vdot"></div></div><div><div class="vname">🌐 Public</div><div class="vdesc">Everyone can watch your video</div></div></div>
+        <div class="vopt" id="vopt-unlisted" onclick="setVis('unlisted')"><div class="vradio"><div class="vdot"></div></div><div><div class="vname">🔗 Unlisted</div><div class="vdesc">Anyone with the link can watch</div></div></div>
+        <div class="vopt" id="vopt-private" onclick="setVis('private')"><div class="vradio"><div class="vdot"></div></div><div><div class="vname">🔒 Private</div><div class="vdesc">Only you can watch</div></div></div>
+      </div>
     </div>
   </div>
 
-  <div class="flow-note" id="flow-note">⚠️ Flow videos must be maximum 1 minute 30 seconds</div>
-
-  <!-- UPLOAD -->
-  <div class="upload-area" id="upload-area" onclick="triggerUpload()">
-    <span class="upload-ico" id="upload-ico">📁</span>
-    <div class="upload-txt" id="upload-txt">Choose a video or photo from your device</div>
-    <label class="upload-lbl">Browse Files</label>
-    <input type="file" id="file-inp" style="display:none" accept="image/*,video/*">
-  </div>
-  <div class="preview-row" id="preview-row">
-    <span id="preview-ico">🎬</span>
-    <span class="preview-name" id="preview-name"></span>
-    <button class="rm-btn" onclick="removeFile()">✕</button>
-  </div>
-
-  <!-- TITLE (mandatory, max 100) -->
-  <div class="inp-label">
-    <span>Title <span class="req">* Required</span></span>
-    <span class="char-count"><span id="title-count">0</span>/100</span>
-  </div>
-  <input class="inp" id="post-title" placeholder="Give your post a title..." maxlength="100" oninput="document.getElementById('title-count').textContent=this.value.length">
-  <div class="err-msg" id="title-err">Title is required — please write something!</div>
-
-  <!-- TOPIC (mandatory) -->
-  <div class="inp-label">Topic <span class="req">* Required</span></div>
-  <select class="inp" id="post-topic" style="margin-bottom:12px">
-    <option value="">Select a topic...</option>
-    <option>Music</option><option>Gaming</option><option>Art & Design</option>
-    <option>Tech</option><option>Food</option><option>Travel</option>
-    <option>Comedy</option><option>Education</option><option>Sports</option>
-    <option>Fashion</option><option>Fitness</option><option>Vlog</option><option>Other</option>
-  </select>
-  <div class="err-msg" id="topic-err">Please select a topic!</div>
-
-  <!-- TAGS (optional) -->
-  <div class="inp-label"><span>Tags</span><span class="opt-tag">Optional</span></div>
-  <input class="inp" id="post-tags" placeholder="#vybeoza #vibe #trending">
-
-  <!-- CAPTION (optional) -->
-  <div class="inp-label"><span>Caption</span><span class="opt-tag">Optional</span></div>
-  <textarea class="inp" id="post-caption" placeholder="What's on your mind? Share the vibe 🎯"></textarea>
-
-  <!-- AUTO CAPTIONS -->
-  <div class="toggle-row">
-    <div>
-      <div style="font-size:12px;font-weight:500">🤖 Auto Captions</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px">Generate captions automatically</div>
+  <!-- MORE OPTIONS -->
+  <div class="section-card">
+    <div class="section-hdr" onclick="toggleSec('more')">
+      <div class="section-hdr-left"><div class="stitle">More Options</div><div class="ssub">Comments, likes, subtitles, end screen</div></div>
+      <span class="sarrow" id="more-arr">▼</span>
     </div>
-    <button class="toggle on" id="tog-cap" onclick="this.classList.toggle('on');toast(this.classList.contains('on')?'Auto captions on':'Auto captions off')"></button>
+    <div class="sbody" id="more-body">
+      <div class="trow"><div><div class="tlbl">Hide like count</div><div class="tsub">Viewers won't see like count</div></div><button class="toggle" id="tog-likes" onclick="this.classList.toggle('on')"></button></div>
+      <div class="trow"><div><div class="tlbl">Disable comments</div><div class="tsub">No one can comment on this video</div></div><button class="toggle" id="tog-cmts" onclick="this.classList.toggle('on')"></button></div>
+      <div class="trow"><div><div class="tlbl">Auto Captions</div><div class="tsub">Generate captions automatically</div></div><button class="toggle on" id="tog-cap" onclick="this.classList.toggle('on')"></button></div>
+      <div class="trow"><div><div class="tlbl">End Screen</div><div class="tsub">Promote related content at end</div></div><button onclick="toast('Available after video is processed')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px">Add</button></div>
+      <div class="trow"><div><div class="tlbl">Cards</div><div class="tsub">Promote content during video</div></div><button onclick="toast('Available after video is processed')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px">Add</button></div>
+      <div class="trow" style="border:none"><div><div class="tlbl">Add Subtitles</div><div class="tsub">Reach a broader audience</div></div><button onclick="toast('Available after upload')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:8px;font-size:11px">Add</button></div>
+    </div>
   </div>
 
-  <!-- EXTRA OPTIONS -->
-  <div class="extra-row">
-    <button class="etag" onclick="toast('📍 Location added!')">📍 Add Location</button>
-    <button class="etag" onclick="toast('👥 People tagged!')">👥 Tag People</button>
-    <button class="etag" onclick="toast('🌐 Audience set!')">🌐 Audience</button>
-    <button class="etag" id="hide-likes-btn" onclick="toggleHideLikes()">👁 Hide Likes</button>
-    <button class="etag" id="comments-off-btn" onclick="toggleComments()">💬 Comments On</button>
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <button class="draft-btn" onclick="saveDraft()">Save Draft</button>
+    <button class="pub-btn" id="pub-btn" onclick="publishPost()">Publish →</button>
   </div>
+</div>
 
-  <button class="submit-btn" onclick="submitPost()">Post to VYBEOZA →</button>
+<!-- UPLOADING OVERLAY -->
+<div class="uploading-ov" id="up-ov">
+  <div style="font-size:40px">📤</div>
+  <div class="up-title">Uploading your video</div>
+  <div class="up-sub" id="up-sub">Preparing...</div>
+  <div class="up-pct" id="up-pct">0%</div>
+  <div class="up-bar-wrap"><div class="up-bar" id="up-bar"></div></div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;max-width:260px">You can close this screen anytime — we'll save your post</div>
+  <div class="up-link" id="up-link"></div>
 </div>
 
 <div class="bnav">
@@ -177,153 +212,225 @@ textarea.inp{resize:none;min-height:80px;line-height:1.6}
 <div class="toast" id="toast"></div>
 
 <script>
-var user=null; try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){} if(!user)window.location.href='index.html'; var uc=localStorage.getItem('vyb_color'); if(uc){document.documentElement.style.setProperty('--accent',uc);document.documentElement.style.setProperty('--user-color',uc);}
-function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},1800);}
+var user=null;try{user=JSON.parse(localStorage.getItem('vyb_user'));}catch(e){}if(!user)window.location.href='index.html';
+var uc=localStorage.getItem('vyb_color');if(uc){document.documentElement.style.setProperty('--accent',uc);document.documentElement.style.setProperty('--user-color',uc);}
 
-var selType='viso';
-var hideLikes=false;
-var commentsOff=false;
+var CL_CLOUD='dnhsfd80r', CL_PRESET='vybeoza_uploads';
+var SB_URL='https://vhwodzssytkcbicrtunn.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M';
 
-function selectType(t){
-  selType=t;
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},2000);}
+
+var curType='viso', curVis='public', curThumb=0, selFile=null, thumbFile=null, curStep=1;
+
+function goBack(){if(curStep===2){curStep=1;document.getElementById('step2').classList.remove('show');document.getElementById('step1').classList.add('show');document.getElementById('page-title').textContent='New Post';}else{history.back();}}
+
+function selType(t){
+  curType=t;
   document.querySelectorAll('.type-card').forEach(function(c){c.classList.remove('on');});
-  if(t==='live'){
-    toast('Live streaming launching soon! 🔴');
-    document.getElementById('tc-live').classList.add('on');
-    return;
-  }
+  if(t==='live'){toast('Live streaming coming soon! 🔴');return;}
   document.getElementById('tc-'+t).classList.add('on');
-  document.getElementById('flow-note').classList.toggle('show', t==='flow');
-  document.getElementById('file-inp').accept = t==='viso'?'image/*,video/*':'video/*';
-  document.getElementById('upload-ico').textContent = t==='flow'?'📽️':'📁';
-  document.getElementById('upload-txt').textContent = t==='flow'?'Choose a short video (max 1:30)':'Choose a video or photo';
+  document.getElementById('file-inp').accept=t==='flow'?'video/*':'image/*,video/*';
+  if(t==='flow')toast('⚠️ Flow videos max 1 minute 30 seconds');
 }
 
-function triggerUpload(){ document.getElementById('file-inp').click(); }
 document.getElementById('file-inp').onchange=function(){
-  var f=this.files[0]; if(!f) return;
-  document.getElementById('upload-area').classList.add('has-file');
-  var isVid=f.type.includes('video');
-  document.getElementById('upload-ico').textContent=isVid?'🎬':'🖼️';
-  document.getElementById('upload-txt').textContent=f.name;
-  document.getElementById('preview-row').classList.add('show');
-  document.getElementById('preview-ico').textContent=isVid?'🎬':'🖼️';
-  document.getElementById('preview-name').textContent=f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB)';
-  toast('File selected! ✅');
-};
-function removeFile(){
-  document.getElementById('preview-row').classList.remove('show');
-  document.getElementById('upload-area').classList.remove('has-file');
-  document.getElementById('upload-ico').textContent='📁';
-  document.getElementById('upload-txt').textContent='Choose a video or photo from your device';
-  document.getElementById('file-inp').value='';
-}
-
-function toggleHideLikes(){
-  hideLikes=!hideLikes;
-  document.getElementById('hide-likes-btn').textContent=hideLikes?'👁 Show Likes':'👁 Hide Likes';
-  toast(hideLikes?'Likes hidden':'Likes visible');
-}
-function toggleComments(){
-  commentsOff=!commentsOff;
-  document.getElementById('comments-off-btn').textContent=commentsOff?'💬 Comments Off':'💬 Comments On';
-  toast(commentsOff?'Comments disabled':'Comments enabled');
-}
-
-// CLOUDINARY + SUPABASE CONFIG
-var CL_CLOUD = 'dnhsfd80r';
-var CL_PRESET = 'vybeoza_uploads';
-var SB_URL = 'https://vhwodzssytkcbicrtunn.supabase.co';
-var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M';
-
-async function uploadToCloudinary(file){
-  var fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', CL_PRESET);
-  fd.append('folder', 'vybeoza/posts');
-  var r = await fetch('https://api.cloudinary.com/v1_1/'+CL_CLOUD+'/auto/upload', {method:'POST', body:fd});
-  var data = await r.json();
-  return data.secure_url;
-}
-
-async function savePostToSupabase(postData){
-  var tok = user.sb_token || SB_KEY;
-  var r = await fetch(SB_URL+'/rest/v1/posts', {
-    method:'POST',
-    headers:{
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer '+tok,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
-    },
-    body: JSON.stringify(postData)
-  });
-  return r.json();
-}
-
-async function submitPost(){
-  var title = document.getElementById('post-title').value.trim();
-  var titleErr = document.getElementById('title-err');
-  titleErr.classList.remove('show');
-
-  if(!title){
-    titleErr.classList.add('show');
-    document.getElementById('post-title').classList.add('err');
-    document.getElementById('post-title').focus();
-    return;
+  var f=this.files[0];if(!f)return;
+  selFile=f;
+  var isVid=f.type.startsWith('video/');
+  document.getElementById('upload-zone').style.display='none';
+  var pw=document.getElementById('preview-wrap');
+  pw.classList.add('show');
+  if(isVid){
+    var vp=document.getElementById('video-prev');
+    vp.src=URL.createObjectURL(f);
+    vp.style.display='block';
+    document.getElementById('img-prev').style.display='none';
+    vp.onloadeddata=function(){genThumbs(vp);};
+  } else {
+    var ip=document.getElementById('img-prev');
+    ip.src=URL.createObjectURL(f);
+    ip.style.display='block';
+    document.getElementById('video-prev').style.display='none';
+    setImgThumbs(URL.createObjectURL(f));
   }
-  document.getElementById('post-title').classList.remove('err');
+  document.getElementById('next-btn').classList.add('show');
+};
 
-  if(selType === 'live'){ toast('Live streaming coming soon! 🔴'); return; }
+function genThumbs(vid){
+  var times=[vid.duration*0.1,vid.duration*0.5,vid.duration*0.9];
+  times.forEach(function(t,i){
+    var canvas=document.createElement('canvas');
+    canvas.width=320;canvas.height=180;
+    var ctx=canvas.getContext('2d');
+    var tv=document.createElement('video');
+    tv.src=vid.src;
+    tv.currentTime=t;
+    tv.onseeked=function(){
+      ctx.drawImage(tv,0,0,320,180);
+      var opt=document.getElementById('th'+i);
+      opt.innerHTML='<span class="thumb-lbl">Auto '+(i+1)+'</span>';
+      var img=document.createElement('img');
+      img.src=canvas.toDataURL('image/jpeg',0.8);
+      opt.insertBefore(img,opt.firstChild);
+      opt._data=canvas.toDataURL('image/jpeg',0.8);
+    };
+  });
+}
 
-  var file = document.getElementById('file-inp').files[0];
-  var caption = document.getElementById('post-caption').value.trim();
-  var submitBtn = document.querySelector('.submit-btn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Uploading... ⏳';
+function setImgThumbs(src){
+  var filters=['none','brightness(1.15) saturate(1.2)','contrast(1.1) sepia(20%)'];
+  [0,1,2].forEach(function(i){
+    var opt=document.getElementById('th'+i);
+    opt.innerHTML='<span class="thumb-lbl">Option '+(i+1)+'</span>';
+    var img=document.createElement('img');
+    img.src=src;img.style.filter=filters[i];
+    opt.insertBefore(img,opt.firstChild);
+  });
+}
+
+function pickThumb(i){
+  curThumb=i;
+  document.querySelectorAll('.thumb-opt').forEach(function(o,idx){o.classList.toggle('on',idx===i);});
+}
+
+function setCustomThumb(inp){
+  var f=inp.files[0];if(!f)return;
+  thumbFile=f;curThumb='custom';
+  document.querySelectorAll('.thumb-opt').forEach(function(o){o.classList.remove('on');});
+  var url=URL.createObjectURL(f);
+  var tc=document.querySelector('.thumb-upload');
+  tc.style.backgroundImage='url('+url+')';tc.style.backgroundSize='cover';tc.style.height='80px';
+  toast('Custom thumbnail set! ✅');
+}
+
+function goToDetails(){
+  curStep=2;
+  document.getElementById('step1').classList.remove('show');
+  document.getElementById('step2').classList.add('show');
+  document.getElementById('page-title').textContent='Add Details';
+}
+
+function toggleSec(id){
+  var body=document.getElementById(id+'-body');
+  var arr=document.getElementById(id+'-arr');
+  body.classList.toggle('open');arr.classList.toggle('open');
+}
+
+function setVis(v){
+  curVis=v;
+  document.querySelectorAll('.vopt').forEach(function(o){o.classList.remove('on');});
+  document.getElementById('vopt-'+v).classList.add('on');
+  var labels={public:'Public — Everyone can watch',unlisted:'Unlisted — Only with link',private:'Private — Only you'};
+  document.getElementById('vis-sub').textContent=labels[v];
+}
+
+function saveDraft(){
+  var d={title:document.getElementById('post-title').value,type:curType,vis:curVis,saved:new Date().toISOString()};
+  localStorage.setItem('vyb_draft',JSON.stringify(d));
+  toast('Draft saved! ✅');
+}
+
+function setProgress(pct,msg){
+  document.getElementById('up-bar').style.width=pct+'%';
+  document.getElementById('up-pct').textContent=pct+'%';
+  document.getElementById('up-sub').textContent=msg;
+}
+
+async function uploadCL(file,folder){
+  return new Promise(function(resolve,reject){
+    var fd=new FormData();
+    fd.append('file',file);
+    fd.append('upload_preset',CL_PRESET);
+    fd.append('folder',folder);
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST','https://api.cloudinary.com/v1_1/'+CL_CLOUD+'/auto/upload');
+    xhr.upload.onprogress=function(e){
+      if(e.lengthComputable){var p=Math.round(e.loaded/e.total*50)+5;setProgress(p,'Uploading '+Math.round(e.loaded/e.total*100)+'%...');}
+    };
+    xhr.onload=function(){
+      try{var d=JSON.parse(xhr.responseText);if(d.secure_url){resolve(d.secure_url);}else{reject(new Error('No URL'));}}
+      catch(e){reject(e);}
+    };
+    xhr.onerror=function(){reject(new Error('Network error'));};
+    xhr.send(fd);
+  });
+}
+
+async function publishPost(){
+  var title=document.getElementById('post-title').value.trim();
+  var err=document.getElementById('title-err');
+  if(!title){err.classList.add('show');document.getElementById('post-title').classList.add('err');document.getElementById('post-title').focus();return;}
+  err.classList.remove('show');
+  if(!selFile){toast('Please select a file first!');goBack();return;}
+
+  document.getElementById('up-ov').classList.add('show');
+  document.getElementById('pub-btn').disabled=true;
+  setProgress(5,'Starting upload...');
 
   try {
-    var mediaUrl = '';
-    var mediaType = selType;
+    // Upload media
+    var mediaUrl=await uploadCL(selFile,'vybeoza/posts');
+    setProgress(60,'Saving post...');
 
-    // Upload file to Cloudinary if selected
-    if(file){
-      toast('Uploading media... ⏳');
-      mediaUrl = await uploadToCloudinary(file);
+    // Upload custom thumbnail
+    var thumbUrl='';
+    if(thumbFile){
+      thumbUrl=await uploadCL(thumbFile,'vybeoza/thumbnails');
+    } else if(selFile.type.startsWith('image/')){
+      thumbUrl=mediaUrl;
     }
 
-    // Save post to Supabase
-    var postData = {
-      user_id: user.sb_uid || null,
-      title: title,
-      caption: caption,
-      media_url: mediaUrl,
-      media_type: mediaType,
-      likes: 0,
-      views: 0
+    setProgress(80,'Saving to database...');
+
+    var desc=document.getElementById('post-desc').value.trim();
+    var postData={
+      title:title,
+      caption:desc,
+      media_url:mediaUrl,
+      media_type:curType,
+      thumbnail_url:thumbUrl||'',
+      visibility:curVis,
+      hide_likes:document.getElementById('tog-likes').classList.contains('on'),
+      disable_comments:document.getElementById('tog-cmts').classList.contains('on'),
+      likes:0,
+      views:0,
+      username:user.username||'user',
+      name:user.name||'User',
+      avatar:user.avatar||''
     };
+    if(user.sb_uid) postData.user_id=user.sb_uid;
 
-    if(user.sb_uid){
-      await savePostToSupabase(postData);
-    }
+    var tok=user.sb_token||SB_KEY;
+    var r=await fetch(SB_URL+'/rest/v1/posts',{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+tok,
+        'Content-Type':'application/json',
+        'Prefer':'return=representation'
+      },
+      body:JSON.stringify(postData)
+    });
+    var result=await r.json();
+    console.log('Supabase result:',result);
 
-    // Also save to localStorage for offline
-    var localPosts = JSON.parse(localStorage.getItem('vyb_posts')||'[]');
-    localPosts.unshift(Object.assign({}, postData, {
-      username: user.username,
-      name: user.name,
-      avatar: user.avatar||'',
-      id: Date.now()
-    }));
-    localStorage.setItem('vyb_posts', JSON.stringify(localPosts.slice(0,50)));
+    // Local save too
+    var lp=JSON.parse(localStorage.getItem('vyb_posts')||'[]');
+    lp.unshift(Object.assign({},postData,{id:Date.now(),created_at:new Date().toISOString()}));
+    localStorage.setItem('vyb_posts',JSON.stringify(lp.slice(0,50)));
 
-    toast('Posted! 🔥');
-    setTimeout(function(){ window.location.href='flash.html'; }, 1000);
+    setProgress(100,'Published! 🎉');
+    var ul=document.getElementById('up-link');
+    ul.classList.add('show');
+    ul.innerHTML='✅ Post is live! <a href="flash.html">View Feed →</a>';
+    setTimeout(function(){window.location.href='flash.html';},2000);
 
   } catch(e){
-    toast('Error uploading. Try again!');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Post to VYBEOZA →';
+    console.error(e);
+    document.getElementById('up-ov').classList.remove('show');
+    document.getElementById('pub-btn').disabled=false;
+    toast('Upload failed! Check your connection.');
   }
 }
 </script>
