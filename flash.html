@@ -301,6 +301,25 @@ var PREFO_STORIES = [
 ];
 var watchHist = JSON.parse(localStorage.getItem('vyb_watch')||'{}');
 var notInt = JSON.parse(localStorage.getItem('vyb_notint')||'[]');
+var realPosts = [];
+
+var SB_URL2 = 'https://vhwodzssytkcbicrtunn.supabase.co';
+var SB_KEY2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZod29kenNzeXRrY2JpY3J0dW5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMTg3NjQsImV4cCI6MjA4OTU5NDc2NH0.fK3ARflQH8OGDeOG2jq_T5q45m9Igt9fXXO2DbR7n2M';
+
+function loadRealPosts(){
+  fetch(SB_URL2+'/rest/v1/posts?select=*&order=created_at.desc&limit=50',{
+    headers:{'apikey':SB_KEY2,'Authorization':'Bearer '+SB_KEY2}
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    console.log('Posts from Supabase:', data);
+    if(Array.isArray(data)&&data.length>0){
+      realPosts=data;
+      buildGrid();
+    }
+  })
+  .catch(function(e){console.log('Posts load error:',e);});
+}
 
 // PREFO
 function buildPrefo(){
